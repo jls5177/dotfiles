@@ -8,6 +8,9 @@ shift + cmd - r : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"; \
                   launchctl kickstart -k "gui/${UID}/homebrew.mxcl.spacebar"; \
                   skhd --reload
 
+# Turn Yubikey on (setup to turn itself off after 10 seconds)
+shift + cmd - y : osascript -e 'tell application "yubiswitch" to KeyOn'
+
 ####### Window Management Hotkeys #############
 # focus window
 cmd - h : yabai -m window --focus west

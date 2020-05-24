@@ -33,6 +33,12 @@ yabai -m config window_gap                   10
 
 # float system preferences
 yabai -m rule --add app='^System Preferences$' manage=off
+yabai -m rule --add title='Preferences$' manage=off
+
+# float IntelliJ Preference panes
+yabai -m rule --add app='IntelliJ IDEA' manage=on
+yabai -m rule --add app='IntelliJ IDEA' title='Project Structure' manage=off
+yabai -m rule --add app='IntelliJ IDEA' title='Preferences' manage=off
 
 # update battery loop from wiki
 # https://github.com/koekeishiya/yabai/wiki/Tips-and-tricks#updating-battery-icon-in-status-bar-based-on-battery-level

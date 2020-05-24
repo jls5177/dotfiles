@@ -1,0 +1,7 @@
+[alias]
+	oldest-ancestor = !zsh -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
+	map = log --graph --color=always --date=short --pretty=format:'%C(red bold)%h%x09%Creset%C(green)%d%Creset %C(yellow)%cd%Creset ~ %s'
+[core]
+	excludesfile = ~/.config/git/excludes
+[include]
+	path = .gitconfig.local

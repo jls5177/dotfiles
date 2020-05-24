@@ -54,3 +54,5 @@ brew 'yabai', restart_service: :changed
 brew 'skhd', restart_service: :changed
 brew 'spacebar', restart_service: :changed
 
+brew "bluetoothconnector"
+

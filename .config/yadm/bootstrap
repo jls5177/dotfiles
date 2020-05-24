@@ -2,6 +2,14 @@
 
 system_type=$(uname -s)
 
+# Setup any submodules first
+# Because Git submodule commands cannot operate without a work tree, they must
+# be run from within $HOME (assuming this is the root of your dotfiles)
+cd "$HOME"
+
+echo "Init submodules"
+yadm submodule update --recursive --init
+
 # install Homebrew and install default taps, brews, and casks
 if [ "$system_type" = "Darwin" ]; then
 
@@ -11,7 +19,7 @@ if [ "$system_type" = "Darwin" ]; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 
-  if [ -f "$HOME/Brewfile" ]; then
+  if [ -f "$HOME/.Brewfile" ]; then
     echo "Updating homebrew bundle"
     brew bundle --global
   fi
@@ -24,6 +32,7 @@ if command -v vim >/dev/null 2>&1; then
   
   # Install vim-plug if not already installed
   if [[ ! -f ~/.vim/autoload/plug.vim ]]; then
+    echo "installing vim-plug"
     curl --create-dirs -fsSLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
   fi
 

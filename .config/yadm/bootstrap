@@ -1,0 +1,33 @@
+#!/bin/sh
+
+system_type=$(uname -s)
+
+# install Homebrew and install default taps, brews, and casks
+if [ "$system_type" = "Darwin" ]; then
+
+  # install homebrew if it's missing
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "Installing homebrew"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
+
+  if [ -f "$HOME/Brewfile" ]; then
+    echo "Updating homebrew bundle"
+    brew bundle --global
+  fi
+
+fi
+
+# bootstrap Vim is present on the system
+if command -v vim >/dev/null 2>&1; then
+  echo "Bootstraping Vim"
+  
+  # Install vim-plug if not already installed
+  if [[ ! -f ~/.vim/autoload/plug.vim ]]; then
+    curl --create-dirs -fsSLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  fi
+
+  # bootstrap plugins
+  vim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
+fi
+

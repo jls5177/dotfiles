@@ -36,8 +36,10 @@ alias please="sudo"
 alias fucking="sudo"
 
 # Print a programming excuse on each new shell
-alias shuf=gshuf
-$HOME/code/github/programmingexcuses.sh/programmingexcuses | cowsay
+if [ "$(uname -s)" = "Darwin" ]; then
+  alias shuf=gshuf
+fi
+$HOME/.config/programmingexcuses/programmingexcuses | cowsay
 
 # add user bin to the path
 export PATH=$HOME/bin:$PATH

@@ -1,0 +1,60 @@
+# Copy to clipboard
+ctrl+shift+c (also cmd+c on Mac)
+
+# Past from clipboard
+ctrl+shift+v (also ⌘+v on macOS)
+
+# Paste from selection
+ctrl+shift+s
+
+# Increase font size
+ctrl+shift+equal (also ⌘++ on macOS)
+
+# Decrease font size
+ctrl+shift+minus (also ⌘+- on macOS)
+
+# Restore font size
+ctrl+shift+backspace (also ⌘+0 on macOS)
+
+# Toggle fullscreen
+ctrl+shift+f11 (also ^+⌘+f on macOS)
+
+# Toggle maximized
+ctrl+shift+f10
+
+# Input unicode character
+ctrl+shift+u
+
+# Click URL using the keyboard
+ctrl+shift+e
+
+# Copy path or filename into terminal
+ctrl+shift+p>f
+
+# Open path or filename with line number in EDITOR
+ctrl+shift+p>n
+
+# Reset the terminal
+ctrl+shift+delete
+
+# Pass current selection to program
+ctrl+shift+o
+
+# Edit kitty config file
+ctrl+shift+f2
+
+# Open a kitty shell
+ctrl+shift+escape
+
+# Increase background opacity
+ctrl+shift+a>m
+
+# Decrease background opacity
+ctrl+shift+a>l
+
+# Full background opacity
+ctrl+shift+a>1
+
+# Reset background opacity
+ctrl+shift+a>d
+

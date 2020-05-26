@@ -1,0 +1,163 @@
+####### Shortcut Hotkeys #############
+# open terminal
+#alt - return : /Applications/Kitty.app/Contents/MacOS/kitty --single-instance -d ~
+alt - return : $HOME/.config/skhd/open_terminal.sh
+
+# restart Yabi, SpaceBar, and SKHD
+cmd + alt - r : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"; \
+                  launchctl kickstart -k "gui/${UID}/homebrew.mxcl.spacebar"; \
+                  skhd --reload
+
+# Turn Yubikey on (setup to turn itself off after 10 seconds)
+shift + alt - y : osascript -e 'tell application "yubiswitch" to KeyOn'
+
+
+####### Application Blacklists #############
+#.blacklist [
+#	"IntelliJ IDEA"
+#]
+
+
+####### Window Management Hotkeys #############
+# focus window
+alt - h : yabai -m window --focus west
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+alt - l : yabai -m window --focus east
+
+alt - left : yabai -m window --focus west
+alt - down : yabai -m window --focus south
+alt - up : yabai -m window --focus north
+alt - right : yabai -m window --focus east
+
+# go back to previous workspace (kind of like back_and_forth in i3)
+alt - b : yabai -m space --focus recent
+
+# move focused window to previous workspace
+ctrl + alt - b : yabai -m window --space recent; \
+                  yabai -m space --focus recent
+
+# navigate workspaces next / previous using arrow keys
+cmd + alt - left : yabai -m space --focus prev
+cmd + alt - right : yabai -m space --focus next
+
+# navigate to specific workspace (with back and forth support)
+# Note: script fails when workspace is empty due to Yabai not reporting the workspace (bug?)
+#       best to use the create + move window command instead of creating a blank window
+alt - 1 : $HOME/.config/skhd/switch_workspace.sh 1
+alt - 2 : $HOME/.config/skhd/switch_workspace.sh 2
+alt - 3 : $HOME/.config/skhd/switch_workspace.sh 3
+alt - 4 : $HOME/.config/skhd/switch_workspace.sh 4
+alt - 5 : $HOME/.config/skhd/switch_workspace.sh 5
+alt - 6 : $HOME/.config/skhd/switch_workspace.sh 6
+alt - 7 : $HOME/.config/skhd/switch_workspace.sh 7
+alt - 8 : $HOME/.config/skhd/switch_workspace.sh 8
+alt - 9 : $HOME/.config/skhd/switch_workspace.sh 9
+alt - 0 : $HOME/.config/skhd/switch_workspace.sh 10
+
+# Move focused window to specific workspace (with back and forth support)
+ctrl + alt - 1 : $HOME/.config/skhd/move_to_workspace.sh 1
+ctrl + alt - 2 : $HOME/.config/skhd/move_to_workspace.sh 2
+ctrl + alt - 3 : $HOME/.config/skhd/move_to_workspace.sh 3
+ctrl + alt - 4 : $HOME/.config/skhd/move_to_workspace.sh 4
+ctrl + alt - 5 : $HOME/.config/skhd/move_to_workspace.sh 5
+ctrl + alt - 6 : $HOME/.config/skhd/move_to_workspace.sh 6
+ctrl + alt - 7 : $HOME/.config/skhd/move_to_workspace.sh 7
+ctrl + alt - 8 : $HOME/.config/skhd/move_to_workspace.sh 8
+ctrl + alt - 9 : $HOME/.config/skhd/move_to_workspace.sh 9
+ctrl + alt - 0 : $HOME/.config/skhd/move_to_workspace.sh 10
+
+# balance size of windows
+shift + alt - 0 : yabai -m space --balance
+
+# set insertion point in focused container
+ctrl + alt - h : yabai -m window --insert west
+ctrl + alt - j : yabai -m window --insert south
+ctrl + alt - k : yabai -m window --insert north
+ctrl + alt - l : yabai -m window --insert east
+
+# rotate tree
+shift + alt - r : yabai -m space --rotate 90
+
+# mirror tree y-axis
+shift + alt - y : yabai -m space --mirror y-axis
+
+# mirror tree x-axis
+shift + alt - x : yabai -m space --mirror x-axis
+
+# increase window size
+shift + alt - a : yabai -m window --resize left:-20:0
+shift + alt - s : yabai -m window --resize bottom:0:20
+shift + alt - w : yabai -m window --resize top:0:-20
+shift + alt - d : yabai -m window --resize right:20:0
+
+# decrease window size
+shift + lcmd - a : yabai -m window --resize left:20:0
+shift + lcmd - s : yabai -m window --resize bottom:0:-20
+shift + lcmd - w : yabai -m window --resize top:0:20
+shift + lcmd - d : yabai -m window --resize right:-20:0
+
+# shift window in current workspace
+shift + alt - h : yabai -m window --warp west
+shift + alt - j : yabai -m window --warp south
+shift + alt - k : yabai -m window --warp north
+shift + alt - l : yabai -m window --warp east
+
+shift + alt - left : yabai -m window --warp west
+shift + alt - down : yabai -m window --warp south
+shift + alt - up : yabai -m window --warp north
+shift + alt - right : yabai -m window --warp east
+
+# make floating window fill screen
+ctrl + alt - up     : yabai -m window --grid 1:1:0:0:1:1
+
+# make floating window fill left-half of screen
+ctrl + alt - left   : yabai -m window --grid 1:2:0:0:1:1
+
+# make floating window fill right-half of screen
+ctrl + alt - right  : yabai -m window --grid 1:2:1:0:1:1
+
+# create desktop, move window and follow focus
+ctrl + alt - n : yabai -m space --create;\
+                 index="$(yabai -m query --spaces --display | jq 'map(select(."native-fullscreen" == 0))[-1].index')"; \
+                 yabai -m window --space "${index}";\
+                 yabai -m space --focus "${index}"
+
+# create desktop, move window and stay in current workspace
+shift + alt - n : yabai -m space --create;\
+                  index="$(yabai -m query --spaces --display | jq 'map(select(."native-fullscreen" == 0))[-1].index')"; \
+                  yabai -m window --space "${index}"
+
+# create desktop and follow focus
+# Note: script fails when workspace is empty due to Yabai not reporting the workspace (bug?)
+#       best to use the create + move window command instead of creating a blank window
+ctrl + alt - d : yabai -m space --create;\
+                  index="$(yabai -m query --spaces --display | jq 'map(select(."native-fullscreen" == 0))[-1].index')"; \
+                  yabai -m space --focus "${index}"
+
+# destroy desktop
+cmd + alt - w : yabai -m space --destroy
+
+# toggle sticky
+shift + alt - s : yabai -m window --toggle sticky
+
+# float / unfloat window and center on screen
+#alt - t : yabai -m window --toggle float;\
+#          yabai -m window --grid 4:4:1:1:2:2
+# float / unfloat window and leave in its current location
+shift + alt - space : yabai -m window --toggle float
+
+# change layout of desktop
+ctrl + alt - a : yabai -m space --layout bsp
+ctrl + alt - d : yabai -m space --layout float
+
+# toggle window native fullscreen
+shift + alt - f : yabai -m window --toggle native-fullscreen
+
+# focus monitor
+ctrl + alt - x  : yabai -m display --focus recent
+ctrl + alt - z  : yabai -m display --focus prev
+ctrl + alt - c  : yabai -m display --focus next
+ctrl + alt - 1  : yabai -m display --focus 1
+ctrl + alt - 2  : yabai -m display --focus 2
+ctrl + alt - 3  : yabai -m display --focus 3

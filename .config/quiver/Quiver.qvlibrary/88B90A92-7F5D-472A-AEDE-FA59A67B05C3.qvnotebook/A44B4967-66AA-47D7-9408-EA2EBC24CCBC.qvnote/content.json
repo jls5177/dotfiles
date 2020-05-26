@@ -1,0 +1,26 @@
+{
+  "title": "Fix Yabai",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<div>This note captures the changes I would like to make to Yabai to fix the following issues:</div><div><ol><li>Add support to add rules based on “role” and “subrole”</li><li>Add support to stack windows</li><li>Add support for back and forth (like I3) instead of requiring this to be put into bash scripts</li><li>Add support to get the current active window title (and space details) to build a better status bar (to replace Spacebar with Uebersicht)</li></ol></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h2>Stacking Windows</h2><div>A pull request is currently opened that adds this support. Need to pull this into my branch and verify it works before deploying it.</div><div><a href=\"https://github.com/koekeishiya/yabai/pull/344\">https://github.com/koekeishiya/yabai/pull/344</a><br></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h2>Back and forth</h2><div><b>Goal:</b></div><div>Support back-and-forth space and window movements to the “recent” space.</div><div><br></div><div><b>Notes:</b>&nbsp;</div><div>I was able to replicate this behavior using the following shell script:</div>"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "#!/usr/bin/env bash\n# Yabai workspace switcher with back and forth support\n\nif [[ $# -eq 0 ]]; then\n  yabai -m window --space recent\n  yabai -m space --focus recent\nelse\n  current_ws=$(yabai -m query --spaces --display | jq 'map(select(.\"focused\" == 1))[0].index')\n  if [[ \"$current_ws\" == $1 ]]; then\n    # go to previous workspace\n    yabai -m window --space recent\n    yabai -m space --focus recent\n  else\n    # else, go to the workspace specified\n    yabai -m window --space $1\n    yabai -m space --focus $1\n  fi\nfi"
+    },
+    {
+      "type": "text",
+      "data": "<b>Tasks:</b><div><input type=\"checkbox\">&nbsp;Support b&amp;f when focusing spaces<span style=\"color: rgb(221, 221, 221);\">&nbsp;</span></div><div><input type=\"checkbox\">&nbsp;Support b&amp;f when moving a window to a different space<span style=\"color: rgb(221, 221, 221);\"><br></span></div><div><input type=\"checkbox\">&nbsp;Support focusing a space with a window movement<br></div>"
+    }
+  ]
+}

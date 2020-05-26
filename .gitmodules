@@ -1,0 +1,3 @@
+[submodule ".config/programmingexcuses"]
+	path = .config/programmingexcuses
+	url = https://github.com/pixelastic/programmingexcuses.sh.git

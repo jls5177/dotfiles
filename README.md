@@ -44,6 +44,26 @@ Start the Yabai services:
     brew services start yabai
     brew services start skhd
 
+## Yabai Dock integration
+
+Yabai requires installing a script runner into the Dock app to perform the various
+space manipulations. This requires you to disable specific features of the System
+Integrity Protection (SIP). You can follow the steps on the Yabai Wiki page:
+https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection 
+
+Once it is disabled you need to run the following command to install the scripting addition:
+
+    # install the scripting addition
+    sudo yabai --install-sa
+
+    # load the scripting addition
+    killall Dock
+
+## Yabai upgrade steps
+
+You can find the latest upgrade steps on the Yabai Wiki:
+
+https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#updating-to-the-latest-release
 
 # Bootstrap a new system
 

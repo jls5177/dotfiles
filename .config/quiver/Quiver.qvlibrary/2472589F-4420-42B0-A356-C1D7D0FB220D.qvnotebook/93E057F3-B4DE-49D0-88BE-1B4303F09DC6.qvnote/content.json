@@ -1,0 +1,36 @@
+{
+  "title": "Yabai",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<h3>Dump all open windows on a display</h3><div>This command helps identify window titles to add floating support</div>"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "while true\ndo\n  echo \"*******************************\" >> /tmp/watch_output.txt\n  yabai -m query --windows --display 1 2>&1 | tee -a /tmp/watch_output.txt\ndone"
+    },
+    {
+      "type": "text",
+      "data": "<h3>Get details for currently active window</h3><div><b>Note</b>: The sleep time allows you to quickly open and focus on the window in question.</div>"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "sleep 2; yabai -m query --windows --window"
+    },
+    {
+      "type": "text",
+      "data": "Here is an example of the output. Note: the app is “kitty” so this is the terminal I ran the command in."
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "data": "{\n\t\"id\":2743,\n\t\"pid\":2817,\n\t\"app\":\"kitty\",\n\t\"title\":\"sleep 2; yabai -m query --windows --window\",\n\t\"frame\":{\n\t\t\"x\":2546.0000,\n\t\t\"y\":963.0000,\n\t\t\"w\":804.0000,\n\t\t\"h\":917.0000\n\t},\n\t\"level\":0,\n\t\"role\":\"AXWindow\",\n\t\"subrole\":\"AXStandardWindow\",\n\t\"movable\":1,\n\t\"resizable\":1,\n\t\"display\":1,\n\t\"space\":1,\n\t\"visible\":1,\n\t\"focused\":1,\n\t\"split\":\"vertical\",\n\t\"floating\":0,\n\t\"sticky\":0,\n\t\"minimized\":0,\n\t\"topmost\":0,\n\t\"shadow\":1,\n\t\"zoom-parent\":0,\n\t\"zoom-fullscreen\":0,\n\t\"native-fullscreen\":0\n}"
+    },
+    {
+      "type": "text",
+      "data": ""
+    }
+  ]
+}

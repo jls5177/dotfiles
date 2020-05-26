@@ -56,3 +56,6 @@ brew 'spacebar', restart_service: :changed
 
 brew "bluetoothconnector"
 
+tap "aws/tap"
+brew "aws-sam-cli"
+

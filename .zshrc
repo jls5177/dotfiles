@@ -23,6 +23,8 @@ plugins=(
 )
 
 #fpath=(~/.zfunc $fpath)
+fpath=(~/.zsh/completion $fpath)
+autoload -Uz compinit && compinit -i
 
 source $ZSH/oh-my-zsh.sh
 
@@ -45,3 +47,7 @@ $HOME/.config/programmingexcuses/programmingexcuses | cowsay
 export PATH=$HOME/bin:$PATH
 
 export PATH=$HOME/.toolbox/bin:$HOME/scripts:$PATH
+
+# Add SAMToolkit
+alias sam-toolkit="brazil-build-tool-exec sam"
+

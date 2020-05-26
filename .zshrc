@@ -48,6 +48,11 @@ export PATH=$HOME/bin:$PATH
 
 export PATH=$HOME/.toolbox/bin:$HOME/scripts:$PATH
 
+# Kitty terminal config
+alias icat="kitty +kitten icat"
+alias dcat="kitty +kitten diff"
+alias clipcat="kitty +kitten clipboard"
+
 # Add SAMToolkit
 alias sam-toolkit="brazil-build-tool-exec sam"
 

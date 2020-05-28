@@ -7,6 +7,9 @@ ZSH_THEME="agnoster"
 # Would you like to use another custom folder than $ZSH/custom?
 ZSH_CUSTOM=$HOME/.config/zsh
 
+# Setup FZF installation directory for OMZ plugin below
+export FZF_BASE=/usr/local/opt/fzf
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 plugins=(
   osx
@@ -14,6 +17,7 @@ plugins=(
   direnv
   dirhistory
   extract
+  fzf
   git
   git-extras
   history

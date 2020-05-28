@@ -33,26 +33,14 @@ source $ZSH/oh-my-zsh.sh
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
 
-# Be nice or mean!
-alias please="sudo"
-alias fucking="sudo"
-
-# Print a programming excuse on each new shell
-if [ "$(uname -s)" = "Darwin" ]; then
-  alias shuf=gshuf
-fi
-$HOME/.config/programmingexcuses/programmingexcuses | cowsay
-
 # add user bin to the path
 export PATH=$HOME/bin:$PATH
 
 export PATH=$HOME/.toolbox/bin:$HOME/scripts:$PATH
 
-# Kitty terminal config
-alias icat="kitty +kitten icat"
-alias dcat="kitty +kitten diff"
-alias clipcat="kitty +kitten clipboard"
-
-# Add SAMToolkit
-alias sam-toolkit="brazil-build-tool-exec sam"
+# Source individual config shards (with suffix of ".zshrc")
+# this allows to break up configuration and apply different settings using YADM
+for filename in $HOME/.config/zsh/*.zshrc; do
+	source $filename
+done
 

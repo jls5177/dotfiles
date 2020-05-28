@@ -27,7 +27,12 @@ plugins=(
 )
 
 #fpath=(~/.zfunc $fpath)
-fpath=(~/.zsh/completion $fpath)
+fpath=(
+  ~/.zsh/completion
+  ~/code/AmazonZshFunctions/zsh/functions/5.7.1
+  $fpath
+)
+
 autoload -Uz compinit && compinit -i
 
 source $ZSH/oh-my-zsh.sh

@@ -51,8 +51,18 @@ yabai -m rule --add app='IntelliJ IDEA' title='Project Structure' manage=off
 yabai -m rule --add app='IntelliJ IDEA' title='Preferences' manage=off
 yabai -m rule --add app='IntelliJ IDEA' title='Edit configuration' manage=off
 
+yabai -m rule --add app='WebStorm' title='^$' manage=off
+yabai -m rule --add app='WebStorm' title='Project Structure' manage=off
+yabai -m rule --add app='WebStorm' title='Preferences' manage=off
+yabai -m rule --add app='WebStorm' title='Edit configuration' manage=off
+yabai -m rule --add app='WebStorm' title='Configurations$' manage=off
+
+
 # Note: IDEA opens in floating mode due to "title='^$" match, need to add support for matching on "subrole==AXDialog" vs "AXSystemDialog".
 #yabai -m rule --add app='IntelliJ IDEA' title!='^$' manage=on
+
+# float Jetbrains Toolbox
+yabai -m rule --add app='JetBrains Toolbox' manage=off 
 
 # update battery loop from wiki
 # https://github.com/koekeishiya/yabai/wiki/Tips-and-tricks#updating-battery-icon-in-status-bar-based-on-battery-level

@@ -25,10 +25,10 @@ alt - j : yabai -m window --focus south
 alt - k : yabai -m window --focus north
 alt - l : yabai -m window --focus east
 
-alt - left : yabai -m window --focus west
-alt - down : yabai -m window --focus south
-alt - up : yabai -m window --focus north
-alt - right : yabai -m window --focus east
+lalt - left : yabai -m window --focus west
+lalt - down : yabai -m window --focus south
+lalt - up : yabai -m window --focus north
+lalt - right : yabai -m window --focus east
 
 # go back to previous workspace (kind of like back_and_forth in i3)
 alt - b : yabai -m space --focus recent

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#OUTPUT=$(cmd 2>&1)
+#echo $OUTPUT
+OUT=$($HOME/.config/alfred/Alfred.alfredpreferences/workflows/user.workflow.861E084F-E815-46A8-8636-F9E8829F93DF/amazon-alfred-workflow-beta2 midway-session-valid)
+echo $OUT

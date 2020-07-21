@@ -24,6 +24,8 @@ plugins=(
   last-working-dir
   vscode
   wd
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
 #fpath=(~/.zfunc $fpath)

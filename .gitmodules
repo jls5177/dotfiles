@@ -1,3 +1,9 @@
 [submodule ".config/programmingexcuses"]
 	path = .config/programmingexcuses
 	url = https://github.com/pixelastic/programmingexcuses.sh.git
+[submodule "/Users/simoju/.config/zsh/plugins/zsh-autosuggestions"]
+	path = /Users/simoju/.config/zsh/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
+[submodule "/Users/simoju/.config/zsh/plugins/zsh-syntax-highlighting"]
+	path = /Users/simoju/.config/zsh/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

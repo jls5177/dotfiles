@@ -3,3 +3,21 @@
 .ssh/id_rsa_amazon.pub
 {{ end }}
 
+{{ if ne .chezmoi.os "darwin" }}
+.config/kitty
+.config/skhd
+.config/yabai
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+{{ end }}
+
+{{ if ne .chezmoi.os "windows" }}
+Documents
+{{ else }}
+.ssh/id_rsa
+.ssh/id_rsa.pub
+.vim
+.vimrc
+.zshrc
+{{ end }}

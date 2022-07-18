@@ -1,0 +1,30 @@
+[alias]
+	oldest-ancestor = !zsh -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
+	map = log --graph --color=always --date=short --pretty=format:'%C(red bold)%h%x09%Creset%C(green)%d%Creset %C(yellow)%cd%Creset ~ %s'
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	type = cat-file -t
+	dump = cat-file -p
+	squash = rebase -i
+	lg = log --graph\n--pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'\n--abbrev-commit --date=relative
+[core]
+	excludesfile = ~/.config/git/excludes
+[include]
+	path = ~/.gitconfig.local
+[merge]
+	tool = bc
+[mergetool "bc3"]
+	trustExitCode = true
+[pull]
+	rebase = true
+[diff]
+	tool = bc
+[mergetool "bc"]
+	trustExitCode = true
+[init]
+	defaultBranch = development
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+

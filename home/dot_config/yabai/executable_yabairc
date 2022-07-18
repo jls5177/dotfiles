@@ -1,0 +1,112 @@
+#!/usr/bin/env sh
+
+# Workaround to fix M1 support (short term)
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
+# bar settings hack to get different paddings per display
+yabai -m config external_bar main:-24:0
+# yabai -m config external_bar all:40:0
+yabai -m config top_padding 40
+
+# global settings
+yabai -m config mouse_follows_focus          off
+yabai -m config focus_follows_mouse          autofocus
+
+yabai -m config window_placement             second_child
+yabai -m config window_topmost               off
+
+yabai -m config window_opacity               off
+#yabai -m config window_opacity_duration      0.0
+yabai -m config window_shadow                on
+
+yabai -m config active_window_opacity        1.0
+yabai -m config normal_window_opacity        0.90
+yabai -m config split_ratio                  0.50
+yabai -m config auto_balance                 off
+
+# Mouse support
+yabai -m config mouse_modifier               ctrl
+yabai -m config mouse_action1                move
+yabai -m config mouse_action2                resize
+
+# general space settings
+yabai -m config layout                       bsp
+yabai -m config bottom_padding               10
+yabai -m config left_padding                 10
+yabai -m config right_padding                10
+yabai -m config window_gap                   10
+
+# float system preferences
+yabai -m rule --add app='^System Information$' manage=off
+yabai -m rule --add app='^System Preferences$' manage=off
+yabai -m rule --add title='Preferences$' manage=off
+yabai -m rule --add app='Finder' title='Info$' manage=off
+
+# float Better Touch Tool Preference window
+yabai -m rule --add title='^BetterTouchTool' manage=off
+
+# float settings windows
+yabai -m rule --add title='Settings$' manage=off
+
+# float Cisco AnyConnect
+yabai -m rule --add app='^Cisco AnyConnect Secure Mobility Client$' manage=off
+
+# float IntelliJ Preference panes
+yabai -m rule --add app='IntelliJ IDEA' title='^$' manage=off
+yabai -m rule --add app='IntelliJ IDEA' title='Project Structure' manage=off
+yabai -m rule --add app='IntelliJ IDEA' title='Preferences' manage=off
+yabai -m rule --add app='IntelliJ IDEA' title='Edit configuration' manage=off
+
+yabai -m rule --add app='WebStorm' title='^$' manage=off
+yabai -m rule --add app='WebStorm' title='Project Structure' manage=off
+yabai -m rule --add app='WebStorm' title='Preferences' manage=off
+yabai -m rule --add app='WebStorm' title='Edit configuration' manage=off
+yabai -m rule --add app='WebStorm' title='Configurations$' manage=off
+
+
+# Note: IDEA opens in floating mode due to "title='^$" match, need to add support for matching on "subrole==AXDialog" vs "AXSystemDialog".
+#yabai -m rule --add app='IntelliJ IDEA' title!='^$' manage=on
+
+# float Jetbrains Toolbox
+yabai -m rule --add app='JetBrains Toolbox' manage=off 
+
+# update battery loop from wiki
+# https://github.com/koekeishiya/yabai/wiki/Tips-and-tricks#updating-battery-icon-in-status-bar-based-on-battery-level
+function update_battery_loop() {
+	while true; do
+		# Get the current battery percentage.
+		battery=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+		if [ $battery -gt 84 ]; then
+			spacebar -m config status_bar_power_icon_strip  
+		elif [ $battery -gt 60 ]; then
+			spacebar -m config status_bar_power_icon_strip  
+		elif [ $battery -gt 39 ]; then
+			spacebar -m config status_bar_power_icon_strip  
+		elif [ $battery -gt 14 ]; then
+			spacebar -m config status_bar_power_icon_strip  
+		else
+			spacebar -m config status_bar_power_icon_strip  
+		fi
+
+		# wait 5 seconds
+		sleep 5
+	done
+}
+# run the function async
+# update_battery_loop &
+
+# Refresh Uebersicht status bar (disabled due to latency issues and trouble getting active window title)
+# yabai -m signal --add event=space_changed \
+#     action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"nibar-spaces-primary-jsx\"'"
+# yabai -m signal --add event=display_changed \
+#     action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"nibar-spaces-primary-jsx\"'"
+
+# yabai -m signal --add event=space_changed \
+#    action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"nibar-spaces-secondary-jsx\"'"
+# yabai -m signal --add event=display_changed \
+#    action="osascript -e 'tell application \"Übersicht\" to refresh widget id \"nibar-spaces-secondary-jsx\"'"
+
+echo "yabai configuration loaded.."
+

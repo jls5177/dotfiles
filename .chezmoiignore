@@ -9,6 +9,7 @@
 .config/yabai
 .config/boop
 .config/spacebar
+.simplebarrc
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

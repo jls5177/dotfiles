@@ -1,0 +1,5 @@
+{{ if ne .email "simoju@amazon.com" }}
+.ssh/id_rsa_amazon
+.ssh/id_rsa_amazon.pub
+{{ end }}
+

@@ -7,6 +7,8 @@
 .config/kitty
 .config/skhd
 .config/yabai
+.config/boop
+.config/spacebar
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

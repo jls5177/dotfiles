@@ -1,6 +1,14 @@
 {{ if ne .email "simoju@amazon.com" }}
 .ssh/id_rsa_amazon
 .ssh/id_rsa_amazon.pub
+.config/zsh/brazil.zshrc
+.config/zsh/sam_toolkit.zshrc
+{{ if ne .chezmoi.os "darwin" }}
+.config/zsh/midway.zshrc
+.config/zsh/node_nvm.zshrc
+.config/zsh/odin.zshrc
+.config/zsh/pearl.zshrc
+{{ end }}
 {{ end }}
 
 {{ if ne .chezmoi.os "darwin" }}
@@ -10,6 +18,8 @@
 .config/boop
 .config/spacebar
 .simplebarrc
+.config/zsh/kitty.zshrc
+.config/zsh/macosx.zshrc
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

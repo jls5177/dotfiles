@@ -1,0 +1,104 @@
+# Path to your oh-my-zsh installation.
+export ZSH=$HOME/.oh-my-zsh
+
+# Set name of the theme to load.
+ZSH_THEME="agnoster"
+
+# Would you like to use another custom folder than $ZSH/custom?
+ZSH_CUSTOM=$HOME/.config/zsh
+
+# Setup FZF installation directory for OMZ plugin below
+export FZF_BASE=/usr/local/opt/fzf
+
+# Disable auto updates as this is taken care of using other tools
+DISABLE_AUTO_UPDATE="true"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+plugins=(
+  direnv
+  dirhistory
+  extract
+  fzf
+  git
+  git-extras
+  history
+  last-working-dir
+  vscode
+  wd
+  zsh-autosuggestions
+  zsh-completions
+  zsh-syntax-highlighting
+{{- if eq .chezmoi.os "darwin" }}
+  macos
+  brew
+{{- end }}
+)
+
+fpath=(
+  ~/.zsh/completion
+{{- if (and (eq .email "simoju@amazon.com") (eq .chezmoi.os "linux")) }}
+  /apollo/env/envImprovement/var/zsh/functions/5.7.1
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
+  {{- if eq .email "simoju@amazon.com" }}
+  ~/code/AmazonZshFunctions/zsh/functions/5.7.1
+  {{- end }}
+  $(brew --prefix)/share/zsh/site-functions
+{{- end }}
+  $fpath
+)
+
+autoload -Uz compinit && compinit -i
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# Preferred editor for local and remote sessions
+export EDITOR='vim'
+
+# add user bin and scripts to the path
+export PATH=$HOME/bin:$HOME/.local/bin:$HOME/scripts:$PATH
+
+{{ if eq .email "simoju@amazon.com" }}
+# add Toolbox bin to the path
+export PATH=$HOME/.toolbox/bin:$PATH
+{{ end }}
+
+# Source individual config shards (with suffix of ".zshrc")
+# this allows to break up configuration and apply different settings using YADM
+for filename in $HOME/.config/zsh/*.zshrc; do
+	source $filename
+done
+
+export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
+
+{{- if (and (eq .email "simoju@amazon.com") (eq .chezmoi.os "linux")) }}
+# Java 8 JDK
+export JAVA_HOME=/apollo/env/JavaSE8/jdk1.8
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Java 11 JDK
+#export JAVA_HOME=/apollo/env/JavaSE11/jdk-11
+#export PATH=$JAVA_HOME/bin:$PATH
+
+# Add BrazilGitScripts to Path
+export PATH=/apollo/env/Simoju-Dev-Tools/bin:$PATH
+{{- end }}
+
+{{ if eq .chezmoi.os "darwin" }}
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+{{ end }}

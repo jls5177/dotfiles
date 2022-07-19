@@ -1,1 +1,1 @@
-export PATH=$PATH:~/code/github/depot_tools
+export PATH=$PATH:~/.config/depot_tools

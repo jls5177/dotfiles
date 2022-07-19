@@ -34,3 +34,9 @@
     url = "https://github.com/pixelastic/programmingexcuses.sh/archive/master.tar.gz"
     exact = true
     stripComponents = 1
+    refreshPeriod = "168h"
+[".config/depot_tools"]
+    type = "archive"
+    url = "https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/refs/heads/main.tar.gz"
+    exact = true
+    stripComponents = 0

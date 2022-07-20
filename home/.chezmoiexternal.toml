@@ -38,5 +38,5 @@
 [".config/depot_tools"]
     type = "archive"
     url = "https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/refs/heads/main.tar.gz"
-    exact = true
+    exact = false
     stripComponents = 0

@@ -1,0 +1,6 @@
+REGION=us-west-2
+
+aws gigahydrafrontend \
+  --endpoint https://frontend.prod.${REGION}.hydratest.aws.a2z.com \
+  --region ${REGION} \
+  get-persistent-configuration --persistent-configuration-id="$1" 

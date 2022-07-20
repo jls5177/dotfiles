@@ -8,6 +8,14 @@
 .config/zsh/node_nvm.zshrc
 .config/zsh/odin.zshrc
 .config/zsh/pearl.zshrc
+scripts/devdesk-authenticate
+scripts/master-amazon
+scripts/midway-authenticate
+scripts/vpn-onetouch
+scripts/list-persistent-configs
+scripts/get-persistent-configs
+scripts/git-package
+scripts/prop-parser
 {{ end }}
 {{ end }}
 
@@ -16,6 +24,7 @@
 .config/boop
 .config/zsh/kitty.zshrc
 .config/zsh/macosx.zshrc
+scripts/fix-mac-file-limits.sh
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

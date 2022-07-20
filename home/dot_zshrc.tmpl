@@ -4,8 +4,9 @@ export ZSH=$HOME/.oh-my-zsh
 # Set name of the theme to load.
 ZSH_THEME="agnoster"
 
-# Would you like to use another custom folder than $ZSH/custom?
+# Change the cache and custom directory to not pollute the .oh-my-zsh directory
 ZSH_CUSTOM=$HOME/.config/zsh
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyzsh"
 
 # Setup FZF installation directory for OMZ plugin below
 export FZF_BASE=/usr/local/opt/fzf

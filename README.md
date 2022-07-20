@@ -12,18 +12,6 @@ The following environment variables can be set to configure Chezmoi behavior:
 
 For example, you can enable `ASK` by running `ASK=1 chezmoi apply` or enable a minimal version of the dotfiles with `DOTFILES_MINIMAL=1 chezmoi apply`
 
-### Full version
-
-#### Requirements
-1. Chezmoi installed
-2. lastpass-cli installed ([see here](https://www.chezmoi.io/user-guide/password-managers/lastpass/))
-3. Logged into lastpass-cli
-
-#### Initialize Full Config Command
-```shell
-SECRETS=1 chezmoi init https://github.com/jls5177/dotfiles.git -S ~/dotfiles
-```
-
 ### Minimal version
 
 The minimal version installs only the essentials needed for a functional terminal interface:
@@ -35,4 +23,18 @@ The minimal version installs only the essentials needed for a functional termina
 
 ```shell
 DOTFILES_MINIMAL=1 chezmoi init https://github.com/jls5177/dotfiles.git -S ~/dotfiles
+```
+
+### Full version
+
+> **Note:** This should never be ran by anyone else as you will not have access to my personal secrets vault.
+
+#### Requirements
+1. Chezmoi installed
+2. lastpass-cli installed ([see here](https://www.chezmoi.io/user-guide/password-managers/lastpass/))
+3. Logged into lastpass-cli
+
+#### Initialize Full Config Command
+```shell
+SECRETS=1 chezmoi init https://github.com/jls5177/dotfiles.git -S ~/dotfiles
 ```

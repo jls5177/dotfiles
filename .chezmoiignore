@@ -1,8 +1,8 @@
-{{ if ne .email "simoju@amazon.com" }}
-.ssh/id_rsa_amazon
-.ssh/id_rsa_amazon.pub
+{{/* Deploy Amazon specific configs if email matches domain */}}
+{{ if not (hasSuffix "@amazon.com" .email) }}
 .config/zsh/brazil.zshrc
 .config/zsh/sam_toolkit.zshrc
+{{/* ignore Zsh helpers that are specific to MacOSX */}}
 {{ if ne .chezmoi.os "darwin" }}
 .config/zsh/midway.zshrc
 .config/zsh/node_nvm.zshrc
@@ -13,11 +13,7 @@
 
 {{ if ne .chezmoi.os "darwin" }}
 .config/kitty
-.config/skhd
-.config/yabai
 .config/boop
-.config/spacebar
-.simplebarrc
 .config/zsh/kitty.zshrc
 .config/zsh/macosx.zshrc
 {{ end }}
@@ -34,3 +30,17 @@ Documents
 .vimrc
 .zshrc
 {{ end }}
+
+{{- if .config_state.minimum }}
+{{ if ne .chezmoi.os "darwin" }}
+.config/skhd
+.config/yabai
+.config/spacebar
+.simplebarrc
+{{ end }}
+{{- end}}
+
+{{- if not .config_state.secrets }}
+.ssh/id_rsa_amazon
+.ssh/id_rsa_amazon.pub
+{{- end}}

@@ -25,6 +25,7 @@ scripts/prop-parser
 .config/zsh/kitty.zshrc
 .config/zsh/macosx.zshrc
 scripts/fix-mac-file-limits.sh
+scripts/render-git
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

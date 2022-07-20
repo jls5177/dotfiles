@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+svgFile="$(pwd)/../git-draw.svg"
+dotFile="$(pwd)/../git-draw.dot"
+~/scripts/git-draw --hide-legend --image-only --dot-filename "${dotFile}" --image-filename "${svgFile}" &> /dev/null
+
+if [[ -s "${svgFile}" ]] ; then
+  osascript -e "tell application \"Gapplin\" to open \"${svgFile}\""
+fi
+
+#kitty +kitten icat git-draw.svg
+#echo "tell application \"Preview\" to activate" | osascript -

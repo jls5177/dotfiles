@@ -1,9 +1,7 @@
 {{/* Deploy Amazon specific configs if email matches domain */}}
-{{ if not (hasSuffix "@amazon.com" .email) }}
+{{- if not (hasSuffix "@amazon.com" .email) }}
 .config/zsh/brazil.zshrc
 .config/zsh/sam_toolkit.zshrc
-{{/* ignore Zsh helpers that are specific to MacOSX */}}
-{{ if ne .chezmoi.os "darwin" }}
 .config/zsh/midway.zshrc
 .config/zsh/node_nvm.zshrc
 .config/zsh/odin.zshrc
@@ -16,22 +14,23 @@ scripts/list-persistent-configs
 scripts/get-persistent-configs
 scripts/git-package
 scripts/prop-parser
-{{ end }}
-{{ end }}
+.ssh/id_rsa_amazon
+.ssh/id_rsa_amazon.pub
+{{- end }}
 
-{{ if ne .chezmoi.os "darwin" }}
+{{- if ne .chezmoi.os "darwin" }}
 .config/kitty
 .config/boop
 .config/zsh/kitty.zshrc
 .config/zsh/macosx.zshrc
 scripts/fix-mac-file-limits.sh
 scripts/render-git
-{{ end }}
+{{- end }}
 
-{{ if ne .chezmoi.os "linux" }}
-{{ end }}
+{{- if ne .chezmoi.os "linux" }}
+{{- end }}
 
-{{ if ne .chezmoi.os "windows" }}
+{{- if ne .chezmoi.os "windows" }}
 Documents
 {{ else }}
 .ssh/id_rsa
@@ -39,18 +38,20 @@ Documents
 .vim
 .vimrc
 .zshrc
-{{ end }}
+{{- end }}
 
-{{- if .config_state.minimum }}
-{{ if ne .chezmoi.os "darwin" }}
+{{- if .config_state.minimal }}
+{{- if ne .chezmoi.os "darwin" }}
 .config/skhd
 .config/yabai
 .config/spacebar
 .simplebarrc
-{{ end }}
+{{- end }}
 {{- end}}
 
 {{- if not .config_state.secrets }}
-.ssh/id_rsa_amazon
-.ssh/id_rsa_amazon.pub
+.ssh/id_rsa
+.ssh/id_rsa.pub
+.ssh/id_rsa_personal
+.ssh/id_rsa_personal.pub
 {{- end}}

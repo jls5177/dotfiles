@@ -23,15 +23,11 @@ For example, you can enable `ASK` by running `ASK=1 make`.
 
 ### Default version
 
-The minimal version installs only the essentials needed for a functional terminal interface:
-
-* zsh
-* git
-* kitty
-* user-dirs
-
 ```shell
-mkdir -p ~/jls5177-dotfiles && cd ~/jls5177-dotfiles && git clone https://github.com/jls5177/dotfiles.git . && ASK=1 make
+mkdir -p ~/jls5177-dotfiles \
+  && cd ~/jls5177-dotfiles \
+  && git clone https://github.com/jls5177/dotfiles.git . \
+  && ASK=1 make
 ```
 
 ### Secrets version

@@ -31,11 +31,6 @@ endif
 export DRYRUN?=true
 export REINIT?=false
 
-.PHONY: osx-defaults
-osx-defaults: 
-	@$(LOG_STATUS) "Applying OSX defaults.."
-	@bash ./scripts/set_osx_defaults.sh | tee -a $(LOGFILE) || exit 1
-
 .PHONY: install-chezmoi
 install-chezmoi:
 	@$(LOG_STATUS) "Installing chezmoi.."

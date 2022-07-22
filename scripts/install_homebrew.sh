@@ -24,6 +24,12 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
 	# util::is_available brew ||
 	# 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
 	# util::is_available chezmoi || brew install chezmoi
-else
-	ansi --yellow "Not a darwin platform. Skipping"
+elif [[ "$(util::host_os)" == "linux"* ]]; then
+    ansi --yellow "Warning Linux support is untested."
+     if util::is_available chezmoi; then
+        ansi --yellow "Chezmoi is installed. Skipping"
+    else
+        ansi --green "Chezmoi not installed. Installing..."
+        sh -c "$(wget -qO- https://chezmoi.io/get)" || sh -c "$(curl -fsLS https://chezmoi.io/get)"
+    fi
 fi

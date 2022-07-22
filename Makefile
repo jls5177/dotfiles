@@ -95,5 +95,5 @@ secrets-verify: chezmoi-verify
 
 .PHONY: post-chezmoi
 post-chezmoi:
-	@$(LOG_STATUS) "Starting post-install actions"
-	@$(LOG_STATUS) "Post-install setup done"
+	@$(LOG_STATUS) "Starting post-apply actions"
+	@$(LOG_STATUS) "Post-apply setup complete"

@@ -37,3 +37,11 @@ mkdir -p ~/jls5177-dotfiles \
 ```shell
 cd ~/jls5177-dotfiles && make run-secrets
 ```
+
+### Rerunning Initialization
+
+Run the following command to re-run the initialization process. Which basically deleted the configuration and recreates it. Reprompting you for your details.
+
+```shell
+cd ~/jls5177-dotfiles && git pull -r && ASK=1 REINIT=true make chezmoi-init
+```

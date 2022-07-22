@@ -2,9 +2,7 @@
 {{- $minimal := false -}}
 {{- $secrets := false -}}
 
-{{- if (env "SECRETS") -}}
-{{- $secrets = true -}}
-{{- else if (env "DOTFILES_MINIMAL") -}}
+{{- if (env "DOTFILES_MINIMAL") -}}
 {{- $minimal = true -}}
 {{- $secrets = false -}}
 {{- end }}
@@ -21,10 +19,6 @@
 // finish defining what is important to me and templating from EVs, Prompts, or default values
 {{- if (env "ASK") }}
 {{- $minimal = promptBool "minimal" -}}
-
-{{- if not $minimal -}}
-{{- $secrets = promptBool "secrets" -}}
-{{- end }}
 
 {{- $name = promptString "full name" $name -}}
 {{- $email = promptString "personal email" $email -}}

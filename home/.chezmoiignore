@@ -14,8 +14,6 @@ scripts/list-persistent-configs
 scripts/get-persistent-configs
 scripts/git-package
 scripts/prop-parser
-.ssh/id_rsa_amazon
-.ssh/id_rsa_amazon.pub
 {{- end }}
 
 {{- if ne .chezmoi.os "darwin" }}
@@ -33,8 +31,6 @@ scripts/render-git
 {{- if ne .chezmoi.os "windows" }}
 Documents
 {{ else }}
-.ssh/id_rsa
-.ssh/id_rsa.pub
 .vim
 .vimrc
 .zshrc
@@ -47,11 +43,4 @@ Documents
 .config/spacebar
 .simplebarrc
 {{- end }}
-{{- end}}
-
-{{- if not .config_state.secrets }}
-.ssh/id_rsa
-.ssh/id_rsa.pub
-.ssh/id_rsa_personal
-.ssh/id_rsa_personal.pub
 {{- end}}

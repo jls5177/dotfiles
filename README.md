@@ -4,17 +4,24 @@ This repository hosts my personal set of [dotfiles](https://dotfiles.github.io/)
 
 **Note:** This repo is heavily inspired by Ben Mezger's dotfile repo: <https://github.com/benmezger/dotfiles>
 
+## Architecture
+
+This package uses custom Chezmoi config directories to deploy multiple Chezmoi states. This allows for isolating my Secrets so
+they are not included with the normal Chezmoi state. Which causes constant password prompts and slows down the normal Chezmoi
+workflow. In addition, this separation allows for anyone to quickly deploy my dotfiles without much hassle.
+
+Everything is driven through a Makefile to ensure a consistent environment when running Chezmoi. This allows you to have your own dotfiles
+deployed with Chezmoi.
+
 ## Installation
 
 The following environment variables can be set to configure Chezmoi behavior:
 
-* `ASK`: Set to `1` if you want to enable chezmoi to prompt you for all values
-* `DOTFILES_MINIMAL`: Set to `1` if you want to install the minimal version that installs the basic configurations (see below)
-* `SECRETS`: Set to `1` to enable my personal secrets (uses my personal secret vaults to initialize sensitive files, this will fail for everyone else if enabled)
+* `ASK`: Set to `1` if you want to enable chezmoi to prompt you for all values. Which you should always enable unless you are deploying into an environment without a TTY terminal.
 
-For example, you can enable `ASK` by running `ASK=1 chezmoi apply` or enable a minimal version of the dotfiles with `DOTFILES_MINIMAL=1 chezmoi apply`
+For example, you can enable `ASK` by running `ASK=1 make`.
 
-### Minimal version
+### Default version
 
 The minimal version installs only the essentials needed for a functional terminal interface:
 
@@ -24,21 +31,13 @@ The minimal version installs only the essentials needed for a functional termina
 * user-dirs
 
 ```shell
-DOTFILES_MINIMAL=1 chezmoi init https://github.com/jls5177/dotfiles.git -S ~/dotfiles
+mkdir -p ~/jls5177-dotfiles && cd ~/jls5177-dotfiles && git clone https://github.com/jls5177/dotfiles.git . && ASK=1 make
 ```
 
-### Full version
+### Secrets version
 
 > **Note:** This should never be ran by anyone else as you will not have access to my personal secrets vault.
 
-#### Requirements
-
-1. Chezmoi installed
-2. lastpass-cli installed ([see here](https://www.chezmoi.io/user-guide/password-managers/lastpass/))
-3. Logged into lastpass-cli
-
-#### Initialize Full Config Command
-
 ```shell
-SECRETS=1 chezmoi init https://github.com/jls5177/dotfiles.git -S ~/dotfiles
+cd ~/jls5177-dotfiles && make run-secrets
 ```

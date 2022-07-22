@@ -21,11 +21,11 @@ default: run-default
 ifeq (,$(findstring $(MAKECMDGOALS), run-secrets secrets-init secrets-status))
 $(info NOTE: Using default config)
 export SRC_DIR?=$(SOURCE_DIR)
-export CFG_FILE?=$(HOME)/.config/chezmoi/default/chezmoi.yaml
+export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-default/chezmoi.yaml
 else
 $(info NOTE: Using secrets config)
 export SRC_DIR?=$(SOURCE_DIR)/secrets
-export CFG_FILE?=$(HOME)/.config/chezmoi/secrets/chezmoi.yaml
+export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-secrets/chezmoi.yaml
 endif
 
 export DRYRUN?=false

@@ -26,6 +26,8 @@ scripts/prop-parser
 .config/boop
 .config/zsh/kitty.zshrc
 .config/zsh/macosx.zshrc
+.config/zsh/midway.zshrc
+.config/zsh/programming_excuses.zshrc
 scripts/fix-mac-file-limits.sh
 scripts/render-git
 {{- end }}

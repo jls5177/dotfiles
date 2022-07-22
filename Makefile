@@ -28,7 +28,7 @@ export SRC_DIR?=$(SOURCE_DIR)/secrets
 export CFG_FILE?=$(HOME)/.config/chezmoi/secrets/chezmoi.yaml
 endif
 
-export DRYRUN?=true
+export DRYRUN?=false
 export REINIT?=false
 
 .PHONY: install-chezmoi

@@ -21,7 +21,7 @@ default: run-default
 ifeq (,$(findstring $(MAKECMDGOALS), run-secrets secrets-init secrets-status))
 $(info NOTE: Using default config)
 export SRC_DIR?=$(SOURCE_DIR)
-export CFG_FILE?=$(HOME)/.config/chezmoi/chezmoi.yaml
+export CFG_FILE?=$(HOME)/.config/chezmoi/default/chezmoi.yaml
 else
 $(info NOTE: Using secrets config)
 export SRC_DIR?=$(SOURCE_DIR)/secrets
@@ -67,18 +67,17 @@ $(BOLTDB_FILE):
 	@$(SCRIPTS_DIR)/make_rules/run_chezmoi.sh init
 
 .PHONY: chezmoi-apply
-chezmoi-apply: $(BOLTDB_FILE) | ensure-deps
+chezmoi-apply: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "Applying chezmoi.."
 	@$(SCRIPTS_DIR)/make_rules/run_chezmoi.sh apply
 
 .PHONY: chezmoi-status
-chezmoi-status: $(BOLTDB_FILE) | ensure-deps
+chezmoi-status: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "fetching Chezmoi status"
 	@$(SCRIPTS_DIR)/make_rules/run_chezmoi.sh status
 
-
 .PHONY: chezmoi-verify
-chezmoi-verify: $(BOLTDB_FILE) | ensure-deps
+chezmoi-verify: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "verifying Chezmoi state"
 	@$(SCRIPTS_DIR)/make_rules/run_chezmoi.sh verify
 

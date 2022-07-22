@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/.. && pwd -P)
+source "${SRC_ROOT}/scripts/common.sh"
+
+{{ if eq .chezmoi.os "darwin" }}
+log::status "Installing MacOSX Homebrew packages"
+
+# Install primary homebrew packages
+# Brewfile hash: {{ include "Brewfile" | sha256sum }}
+brew bundle --file "${SRC_ROOT}/Brewfile"
+
+# Install Apple Silicon specific packages
+{{ if eq .chezmoi.arch "arm64" }}
+log::status "Installing MacOSX ARM64 Homebrew packages"
+
+# Brewfile-Darwin-arm64 hash: {{ include "Brewfile-Darwin-arm64" | sha256sum }}
+brew bundle --file "${SRC_ROOT}/Brewfile-Darwin-arm64"
+{{end}}
+
+# Install Amzn homebrew packages
+{{ if (hasSuffix "@amazon.com" .email) }}
+log::status "Installing Amzn Homebrew packages"
+
+# Amzn Brewfile hash: {{ include "Brewfile-Amzn" | sha256sum }}
+brew bundle --file "${SRC_ROOT}/Brewfile-Amzn"
+{{ end }}
+
+{{ end }}

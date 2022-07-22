@@ -1,3 +1,8 @@
+# general files within home directory to ignore
+Brewfile
+Brewfile-Amzn
+Brewfile-Darwin-arm64
+
 {{/* Deploy Amazon specific configs if email matches domain */}}
 {{- if not (hasSuffix "@amazon.com" .email) }}
 .config/zsh/brazil.zshrc

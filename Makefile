@@ -98,3 +98,8 @@ secrets-status: chezmoi-status
 
 .PHONY: secrets-verify
 secrets-verify: chezmoi-verify
+
+.PHONY: post-chezmoi
+post-chezmoi:
+	@$(LOG_STATUS) "Starting post-install actions"
+	@$(LOG_STATUS) "Post-install setup done"

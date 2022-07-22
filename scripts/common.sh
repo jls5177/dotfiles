@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-# Common utilities, variables and checks for all build scripts.
-set -o errexit
-set -o nounset
-set -o pipefail
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
 
 # Unset CDPATH, having it set messes up with script import paths
 unset CDPATH

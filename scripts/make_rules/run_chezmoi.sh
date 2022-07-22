@@ -63,7 +63,8 @@ if [[ $VERBOSE -ge 1 ]]; then
 fi
 
 if [[ "${DRYRUN}" == "true" ]]; then
-  log::status "DRYRUN" "$(ansi --green chezmoi ${CMD} ${args[*]})"
+  arg_str="${args[@]}"
+  log::status "DRYRUN" "$(ansi --green "chezmoi ${CMD} ${arg_str}")"
 else
   chezmoi "${CMD}" "${args[@]}"
 fi

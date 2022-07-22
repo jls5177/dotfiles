@@ -4,22 +4,36 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/.. && pwd -P)
+# Use Chezmoi to get source root as it runs the script from temp files
+HOME_ROOT=$(chezmoi source-path)
+SRC_ROOT=$(cd "${HOME_ROOT}"/.. && pwd -P)
 source "${SRC_ROOT}/scripts/common.sh"
+
+DRYRUN="${DRYRUN:-false}"
+
+run_bundle() {
+  local brewfile="${1}"
+  shift
+  if [[ "${DRYRUN}" == "true" ]]; then
+    log::status "DRYRUN" "$(ansi --green "brew bundle --file \"${brewfile}\" ${*}")"
+  else
+    brew bundle install --no-lock --file "${brewfile}" "${@}"
+  fi
+}
 
 {{ if eq .chezmoi.os "darwin" }}
 log::status "Installing MacOSX Homebrew packages"
 
 # Install primary homebrew packages
 # Brewfile hash: {{ include "Brewfile" | sha256sum }}
-brew bundle --file "${SRC_ROOT}/Brewfile"
+run_bundle "${HOME_ROOT}/Brewfile"
 
 # Install Apple Silicon specific packages
 {{ if eq .chezmoi.arch "arm64" }}
 log::status "Installing MacOSX ARM64 Homebrew packages"
 
 # Brewfile-Darwin-arm64 hash: {{ include "Brewfile-Darwin-arm64" | sha256sum }}
-brew bundle --file "${SRC_ROOT}/Brewfile-Darwin-arm64"
+run_bundle "${HOME_ROOT}/Brewfile-Darwin-arm64"
 {{end}}
 
 # Install Amzn homebrew packages
@@ -27,7 +41,7 @@ brew bundle --file "${SRC_ROOT}/Brewfile-Darwin-arm64"
 log::status "Installing Amzn Homebrew packages"
 
 # Amzn Brewfile hash: {{ include "Brewfile-Amzn" | sha256sum }}
-brew bundle --file "${SRC_ROOT}/Brewfile-Amzn"
+run_bundle "${HOME_ROOT}/Brewfile-Amzn"
 {{ end }}
 
 {{ end }}

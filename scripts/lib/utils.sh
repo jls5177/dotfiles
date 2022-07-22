@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-# Common utilities, variables and checks for all build scripts.
-set -o errexit
-set -o nounset
-set -o pipefail
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
 
 # Determines the host platform using native OS tools (no external dependencies)
 util::host_os() {
@@ -61,4 +60,9 @@ util::run_no_err() {
   if ! ("${@}"); then
     : # dead code
   fi
+}
+
+# Test if $1 is available
+util::is_available() {
+	type "$1" &>/dev/null
 }

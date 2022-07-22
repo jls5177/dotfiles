@@ -53,6 +53,14 @@ log::debug() {
   LVL=2 log::level::log "$@"
 }
 
+log::status() {
+  echo "+++ $(log::timestamp) ${1-}"
+  shift
+  for message; do
+    echo "    $message"
+  done
+}
+
 # Logs an error with timestamp prefixed
 log::error() {
   ansi --red "!!! $(log::timestamp) ${1-}" >&2

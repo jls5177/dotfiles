@@ -9,7 +9,7 @@ SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE}")" && pwd -P)
 source "${SCRIPTS_ROOT}/lib/init.sh"
 
 # Make sure common user bin directories are on the path
-export PATH="$HOME/bin:$SRC_ROOT/bin:$PATH"
+export PATH="$HOME/bin:$SRC_ROOT/bin:/opt/homebrew/bin:$PATH"
 
 log::info "HOST_OS=$(util::host_os)"
 if [[ "$(util::host_os)" == "darwin"* ]]; then
@@ -18,10 +18,8 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
         ansi --yellow "Homebrew is installed. Skipping"
     else
         ansi --green "Homebrew not installed. Installing..."
-        #export NONINTERACTIVE=1
-        #curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        brew analytics off
     fi
 
     # Install Chezmoi

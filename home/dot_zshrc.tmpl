@@ -14,6 +14,9 @@ export FZF_BASE=/usr/local/opt/fzf
 # Disable auto updates as this is taken care of using other tools
 DISABLE_AUTO_UPDATE="true"
 
+# add user bin and scripts to the path
+export PATH=$HOME/bin:$HOME/.local/bin:$HOME/scripts:/opt/homebrew/bin:$PATH
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 plugins=(
   direnv
@@ -57,9 +60,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
-
-# add user bin and scripts to the path
-export PATH=$HOME/bin:$HOME/.local/bin:$HOME/scripts:$PATH
 
 {{ if eq .email "simoju@amazon.com" }}
 # add Toolbox bin to the path

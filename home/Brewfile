@@ -82,8 +82,8 @@ brew "watch"
 brew "wget"
 brew "yadm"
 brew "yq"
-brew "koekeishiya/formulae/skhd", args: ["HEAD"]
-brew "koekeishiya/formulae/yabai", args: ["HEAD"]
+brew "koekeishiya/formulae/skhd"
+brew "koekeishiya/formulae/yabai"
 cask "adobe-creative-cloud"
 cask "alfred"
 cask "anaconda"

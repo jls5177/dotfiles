@@ -45,7 +45,7 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         ansi --yellow "Chezmoi is installed. Skipping"
     else
         ansi --green "Chezmoi not installed. Installing..."
-        
+
         # Set the bin directory as Chezmoi uses this as the install directory
         export BINDIR="$HOME/bin"
         sh -c "$(wget -qO- https://chezmoi.io/get)" || sh -c "$(curl -fsLS https://chezmoi.io/get)"

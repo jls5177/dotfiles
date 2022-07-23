@@ -22,6 +22,9 @@ run_bundle() {
 }
 
 {{ if eq .chezmoi.os "darwin" }}
+
+# Only install Homebrew packages if not deploying minimal version
+{{ if not .config_state.minimal }}
 log::status "Installing MacOSX Homebrew packages"
 
 # Install primary homebrew packages
@@ -43,5 +46,7 @@ log::status "Installing Amzn Homebrew packages"
 # Amzn Brewfile hash: {{ include "Brewfile-Amzn" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile-Amzn"
 {{ end }}
-
+{{ else }}
+log::status "$(ansi --yellow "Skipping Homebrew package install due to minimal config")"
+{{ end }}
 {{ end }}

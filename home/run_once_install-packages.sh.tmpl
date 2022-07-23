@@ -40,7 +40,7 @@ run_bundle "${HOME_ROOT}/Brewfile-Darwin-arm64"
 {{end}}
 
 # Install Amzn homebrew packages
-{{ if (hasSuffix "@amazon.com" .email) }}
+{{- if (and (hasKey . "email") (hasSuffix "@amazon.com" .email)) }}
 log::status "Installing Amzn Homebrew packages"
 
 # Amzn Brewfile hash: {{ include "Brewfile-Amzn" | sha256sum }}

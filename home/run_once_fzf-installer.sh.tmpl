@@ -8,7 +8,8 @@ IFS=$'\n\t'
 
 {{ if stat (joinPath .chezmoi.homeDir ".fzf" "install") }}
 # Install script hash: {{ include (joinPath .chezmoi.homeDir ".fzf" "install") | sha256sum }}
-~/.fzf/install
+
+~/.fzf/install --no-update-rc --completion  --key-bindings
 {{ else }}
 echo "WARNING: FZF installer not found"
 {{ end }}

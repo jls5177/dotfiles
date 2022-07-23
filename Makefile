@@ -31,22 +31,17 @@ endif
 export DRYRUN?=false
 export REINIT?=false
 
-.PHONY: install-chezmoi
-install-chezmoi:
-	@$(LOG_STATUS) "Installing chezmoi.."
-	@bash ./scripts/install_chezmoi.sh | tee -a $(LOGFILE) || exit 1
-
-.PHONY: install-homebrew
-install-homebrew:
-	@$(LOG_STATUS) "Installing homebrew.."
-	@bash ./scripts/install_homebrew.sh | tee -a $(LOGFILE) || exit 1
+.PHONY: install-tools
+install-tools:
+	@$(LOG_STATUS) "Installing required tools.."
+	@bash ./scripts/install_tools.sh | tee -a $(LOGFILE) || exit 1
 
 .PHONY: start-deps
 start-deps:
 	@$(LOG_STATUS) "Ensuring dependencies.."
 
 .PHONY: ensure-deps
-ensure-deps: | start-deps install-homebrew install-chezmoi
+ensure-deps: | start-deps install-tools
 
 # This goal allows for reinitializing the configuration
 .PHONY: chezmoi-init

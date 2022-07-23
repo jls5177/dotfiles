@@ -9,6 +9,9 @@ SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/../.. && pwd -P)
 SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/.. && pwd -P)
 source "${SCRIPTS_ROOT}/lib/init.sh"
 
+# Linux on Go likes to install into the local directory
+export PATH="$HOME/bin:$SRC_ROOT/bin:$PATH"
+
 REINIT="${REINIT:-false}"
 DRYRUN="${DRYRUN:-false}"
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+{{ if eq .chezmoi.os "linux" }}
+
+{{ if stat (joinPath .chezmoi.homeDir ".fzf" "install") }}
+# Install script hash: {{ include (joinPath .chezmoi.homeDir ".fzf" "install") | sha256sum }}
+~/.fzf/install
+{{ else }}
+echo "WARNING: FZF installer not found"
+{{ end }}
+
+{{ end }}

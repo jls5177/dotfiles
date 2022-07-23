@@ -15,6 +15,8 @@ export PATH="$HOME/bin:$SRC_ROOT/bin:$PATH"
 REINIT="${REINIT:-false}"
 DRYRUN="${DRYRUN:-false}"
 
+DATA="${DATA:-}"
+
 SRC_DIR="${SRC_DIR:-}"
 CFG_DIR="${CFG_FILE:-}"
 DST_DIR="${DST_DIR:-}"
@@ -33,6 +35,8 @@ args=()
 if [[ "${CMD}" == "init" ]]; then
   if [[ "$REINIT" == "true" ]]; then
     args+=("--data=false")
+  elif [[ -n "$DATA" ]]; then
+    args+=("--data=$DATA")
   fi
 fi
 

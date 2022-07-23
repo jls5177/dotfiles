@@ -17,9 +17,9 @@ deployed with Chezmoi.
 
 The following environment variables can be set to configure Chezmoi behavior:
 
-* `ASK`: Set to `1` if you want to enable chezmoi to prompt you for all values. Which you should always enable unless you are deploying into an environment without a TTY terminal.
+* `ASK`: Set to `1` if you want to enable chezmoi to prompt you for all values during initialization. Which you should always enable unless you are deploying into an environment without a TTY terminal.
 
-For example, you can enable `ASK` by running `ASK=1 make`.
+For example, you can enable `ASK` by running `ASK=1 make reinit`.
 
 ### Default version
 
@@ -35,7 +35,7 @@ mkdir -p ~/jls5177-dotfiles \
 > **Note:** This should never be ran by anyone else as you will not have access to my personal secrets vault.
 
 ```shell
-cd ~/jls5177-dotfiles && make run-secrets
+cd ~/jls5177-dotfiles && make secrets apply
 ```
 
 ### Rerunning Initialization
@@ -43,5 +43,20 @@ cd ~/jls5177-dotfiles && make run-secrets
 Run the following command to re-run the initialization process. Which basically deleted the configuration and recreates it. Reprompting you for your details.
 
 ```shell
-cd ~/jls5177-dotfiles && git pull -r && ASK=1 REINIT=true make chezmoi-init
+cd ~/jls5177-dotfiles && git pull -r && ASK=1 make reinit
 ```
+
+### Make Goals
+
+The included makefile is a thin wrapper around Chezmoi commands. Here is a brief breakdown of each supported goal:
+
+* `init` -> `chezmoi init`
+* `apply` -> `chezmoi apply`
+* `status` -> `chezmoi status`
+* `verify` -> `chezmoi verify`
+* `secerts`: Use in combination with any other goal to target the secrets config. E.g. `make secrets reinit`
+
+### Helper Scripts
+
+* `scripts/chez.sh`: Simple wrapper around Chezmoi that allows you to run any Chezmoi command (useful for debugging/advanced usecases)
+* `scripts/schez.sh`: Same as `chez.sh` except it targets the secrets config (instead of the default config)

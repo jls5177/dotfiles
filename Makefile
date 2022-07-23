@@ -10,26 +10,22 @@ LOG_STATUS = "${LOGGER}" status
 LOG_INFO = "${LOGGER}" info
 LOG_DEBUG = "${LOGGER}" debug
 
-# Set default goal to "run-default"
-default: run-default
+# Set default goal to "apply"
+default: apply
 
 ## Allows the caller to move the destination folder (mostly for testing)
 # export DST_DIR?=$(HOME)/test_home
 
 ## Setup directories based on target being ran (e.g. secrets are deployed as separate
 ## deployment to prevent constantly needing to input secrets vault credentials)
-ifeq (,$(findstring $(MAKECMDGOALS), run-secrets secrets-init secrets-status))
-$(info NOTE: Using default config)
-export SRC_DIR?=$(SOURCE_DIR)
-export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-default/chezmoi.yaml
-else
-$(info NOTE: Using secrets config)
-export SRC_DIR?=$(SOURCE_DIR)/secrets
+ifeq (secrets,$(findstring secrets, $(MAKECMDGOALS)))
+export SECRETS?=1
 export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-secrets/chezmoi.yaml
+else
+export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-default/chezmoi.yaml
 endif
 
 export DRYRUN?=false
-export REINIT?=false
 
 .PHONY: install-tools
 install-tools:
@@ -43,50 +39,42 @@ start-deps:
 .PHONY: ensure-deps
 ensure-deps: | start-deps install-tools
 
-# This goal allows for reinitializing the configuration
-.PHONY: chezmoi-init
-ifeq ($(REINIT), true)
-chezmoi-init: DATA=false
-else
-chezmoi-init: DATA=true
-endif
-chezmoi-init: | ensure-deps
+.PHONY: init
+init: | ensure-deps
 	@$(LOG_STATUS) "initializing Chezmoi state"
-	@$(SCRIPTS_DIR)/lib/run_chezmoi.sh init
+	@$(SCRIPTS_DIR)/chez.sh init
+
+.PHONY: reinit
+reinit: export REINIT=true
+reinit: | ensure-deps
+	@$(LOG_STATUS) "reinitializing Chezmoi state"
+	@$(SCRIPTS_DIR)/chez.sh init
 
 # The BOLTDB file should exist if the repo was initialized
 # This target will skip initialization of the file is present
 BOLTDB_FILE := $(dir $(CFG_FILE))chezmoistate.boltdb
 $(BOLTDB_FILE):
 	@$(LOG_STATUS) "Initializing chezmoi.."
-	@$(SCRIPTS_DIR)/lib/run_chezmoi.sh init
+	@$(SCRIPTS_DIR)/chez.sh init
 
-.PHONY: chezmoi-apply
-chezmoi-apply: | ensure-deps $(BOLTDB_FILE)
+.PHONY: apply
+apply: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "Applying chezmoi.."
-	@$(SCRIPTS_DIR)/lib/run_chezmoi.sh apply
+	@$(SCRIPTS_DIR)/chez.sh apply
 
-.PHONY: chezmoi-status
-chezmoi-status: | ensure-deps $(BOLTDB_FILE)
+.PHONY: status
+status: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "fetching Chezmoi status"
-	@$(SCRIPTS_DIR)/lib/run_chezmoi.sh status
+	@$(SCRIPTS_DIR)/chez.sh status
 
-.PHONY: chezmoi-verify
-chezmoi-verify: | ensure-deps $(BOLTDB_FILE)
+.PHONY: verify
+verify: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "verifying Chezmoi state"
-	@$(SCRIPTS_DIR)/lib/run_chezmoi.sh verify
+	@$(SCRIPTS_DIR)/chez.sh verify
 
-.PHONY: run-default run-secrets
-run-default run-secrets: chezmoi-apply
-
-.PHONY: init-default init-secrets
-init-default init-secrets: chezmoi-init
-
-.PHONY: secrets-status
-secrets-status: chezmoi-status
-
-.PHONY: secrets-verify
-secrets-verify: chezmoi-verify
+.PHONY: secrets
+secrets:
+	@$(LOG_STATUS) "Using Secrets config"
 
 .PHONY: post-chezmoi
 post-chezmoi:

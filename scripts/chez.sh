@@ -9,7 +9,7 @@ SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE}")" && pwd -P)
 source "${SCRIPTS_ROOT}/lib/init.sh"
 
 # Make sure common user bin directories are on the path
-export PATH="$HOME/bin:$SRC_ROOT/bin:$PATH"
+export PATH="$HOME/bin:$SRC_ROOT/bin:/opt/homebrew/bin:$PATH"
 
 SECRETS="${SECRETS:-}"
 

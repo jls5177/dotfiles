@@ -22,6 +22,7 @@ CFG_DIR="${CFG_FILE:-}"
 DST_DIR="${DST_DIR:-}"
 
 CMD="${1:-}"
+shift
 if [[ -z "${CMD}" ]]; then
   log::error_exit "No command specified, cannot execute Chezmoi"
 fi
@@ -30,7 +31,7 @@ fi
 EXTRA_ARGS=""
 
 # build the list of arguments to pass to Chezmoi
-args=()
+args=("$CMD")
 
 if [[ "${CMD}" == "init" ]]; then
   if [[ "$REINIT" == "true" ]]; then
@@ -69,9 +70,11 @@ if [[ $VERBOSE -ge 1 ]]; then
   fi
 fi
 
+args=("${args[@]}" "$@")
+
 if [[ "${DRYRUN}" == "true" ]]; then
   arg_str="${args[@]}"
-  log::status "DRYRUN" "$(ansi --green "chezmoi ${CMD} ${arg_str}")"
+  log::status "DRYRUN" "$(ansi --green "chezmoi ${arg_str}")"
 else
-  chezmoi "${CMD}" "${args[@]}"
+  chezmoi "${args[@]}"
 fi

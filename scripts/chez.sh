@@ -25,4 +25,4 @@ else
 fi
 
 # run Chezmoi which picks up the EVs
-. "${SCRIPTS_ROOT}/lib/run_chezmoi.sh"
+. "${SCRIPTS_ROOT}/lib/run_chezmoi.sh" "$@"

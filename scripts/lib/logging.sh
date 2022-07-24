@@ -45,6 +45,14 @@ log::level::log() {
 
 # Logs the message at the INFO level
 log::echo() {
+  echo "${1-}"
+  shift
+  for message; do
+    echo "    $message"
+  done
+}
+
+log::always() {
   LVL=0 log::level::log "$@"
 }
 

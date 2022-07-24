@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+{{/* Use Chezmoi to get source root as it runs the script from temp files */}}
+HOME_ROOT="{{ .chezmoi.sourceDir }}"
+SRC_ROOT="$(cd "${HOME_ROOT}"/.. && pwd -P)"
+source "${SRC_ROOT}/scripts/common.sh"
+
+{{- if eq .chezmoi.os "darwin" -}}
+
+{{/* Only install Homebrew packages if not deploying minimal version */}}
+{{- if not .config_state.minimal }}
+
+# Capture the contents of the Brew service and SIP to rerun the script on any changes
+{{- $yabai_svc_status := first (output "brew" "services" "info" "yabai" "--json" | fromJson) -}}
+# Brew Yabai status: {{ pick $yabai_svc_status "loaded" "running" "status" | toString }}
+# SIP Status: {{ output "csrutil" "status"  | sha256sum }}
+
+log::status "Checking if Yabai needs to finish post-install setup..."
+yabai_status="{{ get $yabai_svc_status "status" }}"
+if [[ "$yabai_status" != "started" ]]; then
+  log::status "Yabai is not running"
+  if [[ "$(csrutil status | grep -c 'unknown')" == "0" ]]; then
+    log::error "SIP is still enabled" "See https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
+  else
+    log::status "SIP is disabled, attempting to start Yabai"
+    
+    # Install sudoers file if not present
+    if [[ ! -f /private/etc/sudoers.d/yabai ]]; then
+      log::status "Sudoers file is missing, installing to /private/etc/sudoers.d/yabai"
+      echo "$USER ALL = (root) NOPASSWD: /opt/homebrew/bin/yabai,/usr/local/bin/yabai" | sudo tee /private/etc/sudoers.d/yabai > /dev/null
+    fi
+
+    log::status "Installing the script addition"
+    sudo yabai --install-sa
+
+    {{/* Need to manually load SAs with Monterey (v11) and greater */}}
+    {{- $sw_ver_dict := split "." (output "sw_vers" "-productVersion") -}}
+    {{- $os_ver := $sw_ver_dict._0 | atoi -}}
+    {{- if ge $os_ver 11 -}}
+    log::status "Detected newer OS, manually loading script addition"
+    sudo yabai --load-sa
+    {{- end }}
+
+    log::status "Starting Yabai"
+    brew services start yabai
+  fi
+else
+  log::echo "$(ansi --green "Yabai is running, no additional actions needed")"
+fi
+{{ else }}
+log::status "$(ansi --yellow "Skipping Yabai post-install  due to minimal config")"
+{{ end }}
+{{ end }}

@@ -11,6 +11,7 @@ Brewfile-Darwin-arm64
 .config/zsh/node_nvm.zshrc
 .config/zsh/odin.zshrc
 .config/zsh/pearl.zshrc
+scripts/drive.py
 scripts/git-package
 scripts/prop-parser
 scripts/list-persistent-configs

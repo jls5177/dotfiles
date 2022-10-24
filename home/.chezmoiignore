@@ -2,6 +2,7 @@
 Brewfile
 Brewfile-Amzn
 Brewfile-Darwin-arm64
+Brewfile-Msft
 
 {{/* Deploy Amazon specific configs if email matches domain */}}
 {{- if not (and (hasKey . "email") (hasSuffix "@amazon.com" .email)) }}

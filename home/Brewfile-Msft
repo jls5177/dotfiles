@@ -1,0 +1,6 @@
+# Install Azure-CLI
+brew "azure-cli"
+
+# Install Bicep
+tap "azure/bicep"
+brew "bicep"

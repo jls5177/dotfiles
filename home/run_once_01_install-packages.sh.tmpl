@@ -49,6 +49,15 @@ log::status "Installing Amzn Homebrew packages"
 # Amzn Brewfile hash: {{ include "Brewfile-Amzn" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile-Amzn"
 {{ end }}
+
+# Install Msft homebrew packages
+{{- if (and (hasKey . "email") (hasSuffix "@microsoft.com" .email)) }}
+log::status "Installing Msft Homebrew packages"
+
+# Amzn Brewfile hash: {{ include "Brewfile-Msft" | sha256sum }}
+run_bundle "${HOME_ROOT}/Brewfile-Msft"
+{{ end }}
+
 {{ else }}
 log::status "$(ansi --yellow "Skipping Homebrew package install due to minimal config")"
 {{ end }}

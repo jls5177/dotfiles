@@ -19,15 +19,18 @@ scripts/list-persistent-configs
 scripts/get-persistent-configs
 {{- end }}
 
-{{- if ne .chezmoi.os "darwin" }}
+{{- if (and (ne .chezmoi.os "darwin") (ne .chezmoi.os "linux")) }}
 .config/kitty
-.config/boop
 .config/zsh/kitty.zshrc
+scripts/render-git
+{{- end }}
+
+{{- if ne .chezmoi.os "darwin" }}
+.config/boop
 .config/zsh/macosx.zshrc
 .config/zsh/midway.zshrc
 .config/zsh/programming_excuses.zshrc
 scripts/fix-mac-file-limits.sh
-scripts/render-git
 scripts/devdesk-authenticate
 scripts/master-amazon
 scripts/midway-authenticate

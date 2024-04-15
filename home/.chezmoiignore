@@ -19,6 +19,12 @@ scripts/list-persistent-configs
 scripts/get-persistent-configs
 {{- end }}
 
+{{/* Deploy Microsoft specific configs if email matches domain */}}
+{{- if not (and (hasKey . "email") (hasSuffix "@microsoft.com" .email)) }}
+.config/zsh/bitbake.zshrc
+.config/zsh/rack_manager.zshrc
+{{- end }}
+
 {{- if (and (ne .chezmoi.os "darwin") (ne .chezmoi.os "linux")) }}
 .config/kitty
 .config/zsh/kitty.zshrc

@@ -11,6 +11,8 @@ source "${SRC_ROOT}/scripts/common.sh"
 
 DRYRUN="${DRYRUN:-false}"
 
+log::status "Running: ${BASH_SOURCE}"
+
 run_bundle() {
   local brewfile="${1}"
   shift
@@ -61,4 +63,16 @@ run_bundle "${HOME_ROOT}/Brewfile-Msft"
 {{ else }}
 log::status "$(ansi --yellow "Skipping Homebrew package install due to minimal config")"
 {{ end }}
+{{ end }}
+
+{{ if eq .chezmoi.os "linux" }}
+log::status "Detected Linux System"
+{{   if eq .chezmoi.osRelease.id "ubuntu" }}
+log::status "Detected Ubuntu OS"
+# Install Ubuntu packages
+log::status "Installing Ubuntu packages"
+sudo apt install direnv byobu python3 python-is-python3 virtualenv sshpass net-tools golang python3-pip unzip
+# Install Gum application
+go install github.com/charmbracelet/gum@latest
+{{   end }}
 {{ end }}

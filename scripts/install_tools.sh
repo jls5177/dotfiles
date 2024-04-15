@@ -39,6 +39,15 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
     fi
 elif [[ "$(util::host_os)" == "linux"* ]]; then
     ansi --yellow "Warning Linux support is untested."
+    # install homebrew
+    if util::is_available /home/linuxbrew/.linuxbrew/bin/brew; then
+        ansi --yellow "Homebrew is installed. Skipping"
+    else
+        ansi --green "Homebrew not installed. Installing..."
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        /home/linuxbrew/.linuxbrew/bin/brew analytics off
+    fi
+
      if util::is_available chezmoi; then
         ansi --yellow "Chezmoi is installed. Skipping"
     else

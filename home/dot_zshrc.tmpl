@@ -103,3 +103,7 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 {{ end }}
+
+{{ if eq .chezmoi.os "linux" }}
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+{{ end }}

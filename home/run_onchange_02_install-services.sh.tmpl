@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Use Chezmoi to get source root as it runs the script from temp files
+HOME_ROOT="{{ .chezmoi.sourceDir }}"
+SRC_ROOT=$(cd "${HOME_ROOT}"/.. && pwd -P)
+source "${SRC_ROOT}/scripts/common.sh"
+
+log::always "Running: ${BASH_SOURCE}"
+
+{{- if (and (hasKey . "osid") (eq .osid "linux-ubuntu")) }}
+# Install user services
+# TODO: pull from files in ~/.config/systemd/user directory
+SERVICES=(charm)
+
+for service in "${SERVICES[@]}"; do
+    systemctl --user enable $service
+    systemctl --user start $service
+done
+
+{{- end }}

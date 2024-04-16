@@ -44,7 +44,8 @@ scripts/midway-authenticate
 scripts/vpn-onetouch
 {{- end }}
 
-{{- if ne .chezmoi.os "linux" }}
+{{- if ne .osid "linux-ubuntu" }}
+.config/systemd/user/charm.service
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }}

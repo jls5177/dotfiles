@@ -35,6 +35,8 @@ plugins=(
 {{- if eq .chezmoi.os "darwin" }}
   macos
   brew
+{{- else if eq .chezmoi.os "linux" }}
+  brew
 {{- end }}
 )
 
@@ -102,8 +104,4 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-{{ end }}
-
-{{ if eq .chezmoi.os "linux" }}
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 {{ end }}

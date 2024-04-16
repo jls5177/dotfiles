@@ -76,8 +76,6 @@ sudo apt install -y zsh direnv byobu python3 python-is-python3 virtualenv sshpas
 log::always "Installing Charmbracelet packages"
 {{- if lt .osversion "24.04" }}
 log::always "Installing Golang from homebrew as Ubunut 22.04 does not have Golang 20 or greater"
-# ensure homebrew binaries are first in path to use the new Golang for installs
-export PATH="/home/linuxbrew/.linuxbrew/bin/:$PATH"
 # fallback to homebrew on Ubuntu 22.04 as Golang is stuck at v18
 brew install go
 {{ end }}

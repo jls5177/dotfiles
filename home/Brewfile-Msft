@@ -1,6 +1,6 @@
 # Install Azure-CLI
 brew "azure-cli"
 
-# Install Bicep
-tap "azure/bicep"
-brew "bicep"
+# Install Bicep (only works on Mac, now included in Azure-CLI)
+#tap "azure/bicep"
+#brew "bicep"

@@ -31,6 +31,20 @@
 {{-   writeToStdout "💡 Tip: you can re-enter your name and email with `chezmoi init --data=false`.\n" -}}
 {{- end -}}
 
+{{- $osversion := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "versionID" -}}
+{{-   $osversion = printf "%s" .chezmoi.osRelease.versionID -}}
+{{- else if hasKey .chezmoi "windowsVersion" -}}
+{{-   $osversion = printf "%s" .chezmoi.windowsVersion.displayVersion -}}
+{{- end -}}
+
+{{- $osid := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{- else if hasKey .chezmoi "windowsVersion" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.windowsVersion.displayVersion -}}
+{{- end -}}
+
 sourceDir: "{{ .chezmoi.sourceDir }}"
 
 data:
@@ -40,3 +54,5 @@ data:
     minimal: {{ $minimal }}
   name: {{ $name }}
   email: {{ $email }}
+  osid: {{ $osid | quote }}
+  osversion: {{ $osversion | quote }}

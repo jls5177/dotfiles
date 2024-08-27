@@ -20,6 +20,30 @@ ssh-port-tunnelling() {
 	# implement port tunnelling
 }
 
+change-rm-password() {
+	if (( $# == 1 )); then
+		cat >~/.rm-pass <<EOF
+#!/bin/bash
+echo "${1}"
+EOF
+		chmod +x ~/.rm-pass
+	else
+		echo "Usage: change-rm-password <password>"
+	fi
+}
+
+change-bmc-password() {
+	if (( $# == 1 )); then
+		cat >~/.bmc-pass <<EOF
+#!/bin/bash
+echo "${1}"
+EOF
+		chmod +x ~/.bmc-pass
+	else
+		echo "Usage: change-bmc-password <password>"
+	fi
+}
+
 clean_control_chars() {
     while IFS= read -r line; do
         # remove KNOWN control characters. Leave the rest for now.

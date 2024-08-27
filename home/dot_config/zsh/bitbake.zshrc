@@ -18,6 +18,10 @@ bbclean() {
 
 alias bbc='bbclean'
 
+RM_SSH_OPS=("-oLogLevel=error")
+RM_SSH_OPS+=("-oStrictHostKeyChecking=no")
+RM_SSH_OPS+=("-oUserKnownHostsFile=/dev/null")
+
 bbdeploy() {
   local host="${1:?host address is required}"
   local port="${2:?port number is required}"
@@ -26,15 +30,21 @@ bbdeploy() {
 
   ssh-keygen -f "$HOME/.ssh/known_hosts" -R "${host}:${port}"
 
-  for recipe in $*
-  do
-    echo devtool build ${recipe}
-    devtool build ${recipe}
-  done
+  echo bitbake ${@}
+  bitbake ${@}
 
   for recipe in $*
   do
-    echo devtool deploy-target ${recipe} admin@${host} -P ${port} --no-preserve --strip -s
-    devtool deploy-target ${recipe} admin@${host} -P ${port} --no-preserve --strip -s
+    echo devtool deploy-target -e '/home/simonjus/scripts/ssh-into-bmc' ${recipe} admin@${host} -P ${port} --no-preserve --strip -s
+    devtool deploy-target -e '/home/simonjus/scripts/ssh-into-bmc' ${recipe} admin@${host} -P ${port} --no-preserve --strip -s
   done
+}
+
+bbdbgrefresh() {
+	  for recipe in $*
+	do
+		echo "Refreshing $recipe"
+		cp -a $BUILDDIR/tmp/work/armv7ahf-vfpv4d16-openbmc-linux-gnueabi/${recipe}/1.0+gitAUTOINC+7f9e3f09b4-r1/packages-split/${recipe}/*(/) $BUILDDIR/debugfs
+		cp -a $BUILDDIR/tmp/work/armv7ahf-vfpv4d16-openbmc-linux-gnueabi/${recipe}/1.0+gitAUTOINC+7f9e3f09b4-r1/packages-split/${recipe}-dbg/*(/) $BUILDDIR/debugfs
+	done
 }

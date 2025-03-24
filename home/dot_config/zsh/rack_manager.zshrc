@@ -33,15 +33,22 @@ EOF
 }
 
 change-bmc-password() {
+	local askpass_file="${SSH_ASKPASS_FILE:-$HOME/.bmc-pass}"
 	if (( $# == 1 )); then
-		cat >~/.bmc-pass <<EOF
+		echo "change-bmc-password: $1 -> ${askpass_file}"
+		touch ${askpass_file}
+		cat > ${askpass_file} <<EOF
 #!/bin/bash
 echo "${1}"
 EOF
-		chmod +x ~/.bmc-pass
+		chmod +x ${askpass_file}
 	else
 		echo "Usage: change-bmc-password <password>"
 	fi
+}
+
+change-bmc-password-su() {
+	SSH_ASKPASS_FILE="$HOME/.bmc-pass-su" change-bmc-password ${@}
 }
 
 clean_control_chars() {
@@ -73,9 +80,11 @@ filter_output() {
     done
 }
 
-declare -r TAB=$'\t'
-declare -r description="sshlog-${$} ${@}"
+
 format_line() {
+    declare -r TAB=$'\t'
+    declare -r description="sshlog-${$} ${@}"
+
     while IFS= read -r line; do
         raw=${line};
         line=$(echo "${line}" | clean_control_chars);
@@ -89,6 +98,8 @@ format_line() {
 ssh-bmc() {
 	local port=22
 	local host="localhost"
+	local username="${SSH_USERNAME:-admin}"
+	local askpass_file="${SSH_ASKPASS_FILE:-$HOME/.bmc-pass}"
 
 	if (( $# == 1 )); then
 		 case $1 in
@@ -115,19 +126,24 @@ ssh-bmc() {
 		esac
 	fi
 	if [[ -z "$LOG_FILE" ]]; then
-		gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=~/.bmc-pass ssh -p ${port} ${RM_SSH_OPS[@]} admin@${host} ${@}"
-		SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=~/.bmc-pass ssh -p ${port} ${RM_SSH_OPS[@]} admin@${host} ${@}
+		gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=${askpass_file} ssh -p ${port} ${RM_SSH_OPS[@]} ${username}@${host} ${@}"
+		SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=${askpass_file} ssh -p ${port} ${RM_SSH_OPS[@]} ${username}@${host} ${@}
 	else
 		echo "[START]" | format_line >> ${LOG_FILE}
-		gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=~/.bmc-pass ssh -p ${port} ${RM_SSH_OPS[@]} admin@${host} ${@}"
-		SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=~/.bmc-pass ssh -p ${port} ${RM_SSH_OPS[@]} admin@${host} ${@} | tee >(filter_output | format_line >> ${LOG_FILE})
+		gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=${askpass_file} ssh -p ${port} ${RM_SSH_OPS[@]} ${username}@${host} ${@}"
+		SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=${askpass_file} ssh -p ${port} ${RM_SSH_OPS[@]} ${username}@${host} ${@} | tee >(filter_output | format_line >> ${LOG_FILE})
 		echo "[END]" | format_line >> ${LOG_FILE}
 	fi
+}
+
+ssh-bmc-su() {
+	SSH_USERNAME="root" SSH_ASKPASS_FILE="$HOME/.bmc-pass-su" ssh-bmc ${@}
 }
 
 scp-bmc() {
 	local port=22
 	local host="localhost"
+	local askpass_file="${SSH_ASKPASS_FILE:-$HOME/.bmc-pass}"
 
 	if (( $# == 1 )); then
 		 case $1 in
@@ -153,8 +169,12 @@ scp-bmc() {
 				;;
 		esac
 	fi
-	gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=~/.bmc-pass scp -P ${port} ${RM_SSH_OPS[@]} ${@}"
-	SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=~/.bmc-pass scp -P ${port} ${RM_SSH_OPS[@]} ${@}
+	gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=${askpass_file} scp -P ${port} ${RM_SSH_OPS[@]} ${@}"
+	SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=${askpass_file} scp -P ${port} ${RM_SSH_OPS[@]} ${@}
+}
+
+scp-bmc-su() {
+	SSH_ASKPASS_FILE="$HOME/.bmc-pass-su" scp-bmc ${@}
 }
 
 sftp-rm() {

@@ -17,9 +17,9 @@ run_bundle() {
   local brewfile="${1}"
   shift
   if [[ "${DRYRUN}" == "true" ]]; then
-    log::always "DRYRUN" "$(ansi --green "brew bundle --no-lock --file \"${brewfile}\"")"
+    log::always "DRYRUN" "$(ansi --green "brew bundle --file \"${brewfile}\"")"
   else
-    brew bundle install --no-lock --file "${brewfile}"
+    brew bundle install --file "${brewfile}"
   fi
 }
 

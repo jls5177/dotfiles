@@ -2,3 +2,10 @@
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
 
+{{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+[credential]
+	helper = /mnt/c/Users/justinsimon/scoop/shims/git-credential-manager.exe
+{{- else if eq .osid "linux-ubuntu" }}
+[credential]
+	credentialStore = plaintext
+{{   end }}

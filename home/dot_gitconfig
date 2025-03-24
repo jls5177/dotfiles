@@ -27,9 +27,6 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-
-[credential]
-	helper = /mnt/c/Users/justinsimon/scoop/shims/git-credential-manager.exe
 [difftool "bc"]
 	trustExitCode = true
 [color]

@@ -18,7 +18,7 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
         ansi --yellow "Homebrew is installed. Skipping"
     else
         ansi --green "Homebrew not installed. Installing..."
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         brew analytics off
     fi
 
@@ -44,7 +44,7 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         ansi --yellow "Homebrew is installed. Skipping"
     else
         ansi --green "Homebrew not installed. Installing..."
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         /home/linuxbrew/.linuxbrew/bin/brew analytics off
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi

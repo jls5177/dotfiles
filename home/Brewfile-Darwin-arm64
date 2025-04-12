@@ -1,1 +1,8 @@
+tap "FelixKratz/formulae"
+brew "borders"
+
 cask "zulu"
+cask "bettertouchtool"
+cask "serial"
+cask "roon"
+cask "nikitabobko/tap/aerospace"

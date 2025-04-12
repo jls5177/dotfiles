@@ -4,3 +4,6 @@ brew "azure-cli"
 # Install Bicep (only works on Mac, now included in Azure-CLI)
 #tap "azure/bicep"
 #brew "bicep"
+
+# Install Microsoft Edge
+cask "microsoft-edge"

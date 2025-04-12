@@ -33,8 +33,8 @@ log::always "Installing MacOSX Homebrew packages"
 # Brewfile hash: {{ include "Brewfile" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile"
 
-log::always "💡 Post install steps to run Yabai" \
-"    1) Disable System Protection: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
+# log::always "💡 Post install steps to run Yabai" \
+# "    1) Disable System Protection: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
 
 # Install Apple Silicon specific packages
 {{ if eq .chezmoi.arch "arm64" }}

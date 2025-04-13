@@ -40,6 +40,9 @@ util::host_arch() {
     arm64*)
       host_arch=arm64
       ;;
+    aarch64*)
+      host_arch=aarch64
+      ;;
     i?86*)
       host_arch=x86
       ;;

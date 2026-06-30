@@ -2,9 +2,31 @@
 
 This document contains various steps I took when creating this repo.
 
-## Adding SSH key into LastPass
+## Managing secrets with age
+
+Secrets are encrypted in-repo with age, unlocked by a passphrase-protected
+identity committed at `home/key.txt.age`.
+
 ```shell
-printf "Private Key: %s\nPublic Key: %s" "$(cat ~/.ssh/id_rsa)" "$(cat ~/.ssh/id_rsa.pub)" | lpass add --sync=now --non-interactive --note-type=ssh-key "SSH-Amzn3"
+# Add/update an encrypted secret (uses the public recipient, no passphrase)
+./scripts/chez.sh add --encrypt ~/.ssh/id_rsa_msft
+
+# View the decrypted contents (prompts for the passphrase)
+./scripts/chez.sh cat ~/.ssh/id_rsa_msft
+```
+
+### Generating / rotating the age key
+
+```shell
+# 1) generate a new identity (keep the printed public recipient)
+age-keygen -o /tmp/key.txt
+
+# 2) passphrase-protect the identity and commit it
+age -p -a -o home/key.txt.age /tmp/key.txt
+
+# 3) put the recipient (age1...) into home/.chezmoi.yaml.tmpl, then re-encrypt
+#    every secret with `chezmoi re-add` and remove the plaintext identity
+rm -P /tmp/key.txt
 ```
 
 ## Chezmoi Data

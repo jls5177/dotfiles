@@ -1,10 +1,8 @@
 {{- /* Declare variables */ -}}
 {{- $minimal := false -}}
-{{- $secrets := false -}}
 
 {{- if (env "DOTFILES_MINIMAL") -}}
 {{- $minimal = true -}}
-{{- $secrets = false -}}
 {{- end }}
 
 {{- /* Checks if running interactively, which is not the case for GitHub Codespaces */ -}}
@@ -34,22 +32,26 @@
 {{- $osversion := .chezmoi.os -}}
 {{- if hasKey .chezmoi.osRelease "versionID" -}}
 {{-   $osversion = printf "%s" .chezmoi.osRelease.versionID -}}
-{{- else if hasKey .chezmoi "windowsVersion" -}}
-{{-   $osversion = printf "%s" .chezmoi.windowsVersion.displayVersion -}}
 {{- end -}}
 
 {{- $osid := .chezmoi.os -}}
 {{- if hasKey .chezmoi.osRelease "id" -}}
 {{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
-{{- else if hasKey .chezmoi "windowsVersion" -}}
-{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.windowsVersion.displayVersion -}}
 {{- end -}}
 
 sourceDir: "{{ .chezmoi.sourceDir }}"
 
+{{/* Secrets are encrypted in-repo with age, unlocked by a passphrase-protected
+     identity (home/key.txt.age). Requires the `age` binary (installed by the
+     bootstrap). The recipient (public key) is safe to commit. */}}
+encryption: "age"
+age:
+  command: "age"
+  identity: "{{ .chezmoi.sourceDir }}/key.txt.age"
+  recipient: "age1vqfhhvafqhc2xucsu9s8w4nwj0x8v08jh0wufq0qs3r35dafupxs8ez66x"
+
 data:
   config_state:
-    secrets: {{ $secrets }}
     headless: {{ $headless }}
     minimal: {{ $minimal }}
   name: {{ $name }}

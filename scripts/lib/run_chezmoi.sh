@@ -27,9 +27,6 @@ if [[ -z "${CMD}" ]]; then
   log::error_exit "No command specified, cannot execute Chezmoi"
 fi
 
-# TODO: add support to pass in other arguments
-EXTRA_ARGS=""
-
 # build the list of arguments to pass to Chezmoi
 args=("$CMD")
 

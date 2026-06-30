@@ -30,12 +30,12 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
         brew install chezmoi
     fi
 
-    # Install LastPass-CLI
-    if util::is_available chezmoi; then
-        ansi --yellow "LastPass-CLI is installed. Skipping"
+    # Install age (required to decrypt the passphrase-protected secrets before apply)
+    if util::is_available age; then
+        ansi --yellow "age is installed. Skipping"
     else
-        ansi --green "LastPass-CLI not installed. Installing..."
-        brew install lastpass-cli
+        ansi --green "age not installed. Installing..."
+        brew install age
     fi
 elif [[ "$(util::host_os)" == "linux"* ]]; then
     ansi --yellow "Warning Linux support is untested."
@@ -57,5 +57,13 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         # Set the bin directory as Chezmoi uses this as the install directory
         export BINDIR="$HOME/bin"
         sh -c "$(wget -qO- https://chezmoi.io/get)" || sh -c "$(curl -fsLS https://chezmoi.io/get)"
+    fi
+
+    # Install age (required to decrypt the passphrase-protected secrets before apply)
+    if util::is_available age; then
+        ansi --yellow "age is installed. Skipping"
+    else
+        ansi --green "age not installed. Installing..."
+        /home/linuxbrew/.linuxbrew/bin/brew install age
     fi
 fi

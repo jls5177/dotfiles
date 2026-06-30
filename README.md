@@ -6,14 +6,31 @@ This repository hosts my personal set of [dotfiles](https://dotfiles.github.io/)
 
 ## Architecture
 
-This package uses custom Chezmoi config directories to deploy multiple Chezmoi states. This allows for isolating my Secrets so
-they are not included with the normal Chezmoi state. Which causes constant password prompts and slows down the normal Chezmoi
-workflow. In addition, this separation allows for anyone to quickly deploy my dotfiles without much hassle.
+This package deploys a single Chezmoi state from the `home/` directory
+(`.chezmoiroot = home`). Secrets (SSH keys, rclone credentials) live **in the
+repo**, encrypted with [age](https://age-encryption.org). Encryption uses a
+passphrase-protected age identity that is committed to the repo at
+`home/key.txt.age`: the public recipient (safe to share) is stored in the
+Chezmoi config, while the private identity can only be unlocked with a
+passphrase you enter at apply time. This keeps everything in one repo with no
+external secret vault, while never exposing plaintext secrets.
 
-Everything is driven through a Makefile to ensure a consistent environment when running Chezmoi. This allows you to have your own dotfiles
-deployed with Chezmoi.
+> Earlier versions used a second "secrets" Chezmoi state backed by LastPass.
+> That has been removed in favour of in-repo age encryption.
+
+Everything is driven through a Makefile to ensure a consistent environment when
+running Chezmoi.
 
 ## Installation
+
+### Prerequisites
+
+* [`age`](https://age-encryption.org) must be installed (`brew install age`).
+  It is required to unlock the encrypted identity (`home/key.txt.age`) and is
+  installed automatically by the Brewfile during `make`.
+* You will be prompted for the age passphrase whenever Chezmoi needs to decrypt
+  a managed secret (status, diff, apply). Only the repo owner knows this
+  passphrase; without it the encrypted files cannot be read.
 
 The following environment variables can be set to configure Chezmoi behavior:
 
@@ -28,14 +45,6 @@ mkdir -p ~/jls5177-dotfiles \
   && cd ~/jls5177-dotfiles \
   && git clone https://github.com/jls5177/dotfiles.git . \
   && ASK=1 make
-```
-
-### Secrets version
-
-> **Note:** This should never be ran by anyone else as you will not have access to my personal secrets vault.
-
-```shell
-cd ~/jls5177-dotfiles && make secrets apply
 ```
 
 ### Rerunning Initialization
@@ -54,9 +63,25 @@ The included makefile is a thin wrapper around Chezmoi commands. Here is a brief
 * `apply` -> `chezmoi apply`
 * `status` -> `chezmoi status`
 * `verify` -> `chezmoi verify`
-* `secerts`: Use in combination with any other goal to target the secrets config. E.g. `make secrets reinit`
 
 ### Helper Scripts
 
 * `scripts/chez.sh`: Simple wrapper around Chezmoi that allows you to run any Chezmoi command (useful for debugging/advanced usecases)
-* `scripts/schez.sh`: Same as `chez.sh` except it targets the secrets config (instead of the default config)
+
+### Managing secrets
+
+Secrets are encrypted with age against the recipient stored in the Chezmoi
+config. Adding or updating a secret only needs the public recipient (no
+passphrase); reading or applying it requires the passphrase.
+
+```shell
+# add/update an encrypted secret
+./scripts/chez.sh add --encrypt ~/.ssh/id_rsa_msft
+
+# inspect the decrypted contents (prompts for the passphrase)
+./scripts/chez.sh cat ~/.ssh/id_rsa_msft
+```
+
+The passphrase-protected identity lives at `home/key.txt.age`. To rotate it,
+generate a new key, re-encrypt every secret against the new recipient, update
+`home/.chezmoi.yaml.tmpl`, and re-commit `home/key.txt.age`.

@@ -16,14 +16,7 @@ default: apply
 ## Allows the caller to move the destination folder (mostly for testing)
 # export DST_DIR?=$(HOME)/test_home
 
-## Setup directories based on target being ran (e.g. secrets are deployed as separate
-## deployment to prevent constantly needing to input secrets vault credentials)
-ifeq (secrets,$(findstring secrets, $(MAKECMDGOALS)))
-export SECRETS?=1
-export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-secrets/chezmoi.yaml
-else
 export CFG_FILE?=$(HOME)/.config/chezmoi/jls5177-default/chezmoi.yaml
-endif
 
 export DRYRUN?=false
 
@@ -65,16 +58,12 @@ apply: | ensure-deps $(BOLTDB_FILE)
 .PHONY: status
 status: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "fetching Chezmoi status"
-	@$(SCRIPTS_DIR)/chez.sh status
+	@$(SCRIPTS_DIR)/chez.sh status --exclude externals
 
 .PHONY: verify
 verify: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "verifying Chezmoi state"
 	@$(SCRIPTS_DIR)/chez.sh verify
-
-.PHONY: secrets
-secrets:
-	@$(LOG_STATUS) "Using Secrets config"
 
 .PHONY: post-chezmoi
 post-chezmoi:

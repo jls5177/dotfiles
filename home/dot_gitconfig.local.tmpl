@@ -9,3 +9,22 @@
 [credential]
 	credentialStore = plaintext
 {{   end }}
+
+{{- if (and (hasKey . "email") (hasSuffix "@microsoft.com" .email)) }}
+[credential "https://rackmanager.visualstudio.com"]
+	helper =
+	helper = azdo
+[credential "https://azurecsi.visualstudio.com"]
+	helper =
+	helper = azdo
+[credential "https://msazure.visualstudio.com"]
+	helper =
+	helper = azdo
+[credential "https://microsoft.visualstudio.com"]
+	helper =
+	helper = azdo
+[credential "https://dev.azure.com"]
+	helper =
+	helper = azdo
+	useHttpPath = true
+{{- end }}

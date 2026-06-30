@@ -169,8 +169,8 @@ scp-bmc() {
 				;;
 		esac
 	fi
-	gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=${askpass_file} scp -P ${port} ${RM_SSH_OPS[@]} ${@}"
-	SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=${askpass_file} scp -P ${port} ${RM_SSH_OPS[@]} ${@}
+	gum log --time rfc822 --level info -- "SSH_ASKPASS_REQUIRE=\"force\" SSH_ASKPASS=${askpass_file} scp -O -P ${port} ${RM_SSH_OPS[@]} ${@}"
+	SSH_ASKPASS_REQUIRE="force" SSH_ASKPASS=${askpass_file} scp -O -P ${port} ${RM_SSH_OPS[@]} ${@}
 }
 
 scp-bmc-su() {

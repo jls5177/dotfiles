@@ -1,4 +1,5 @@
 # general files within home directory to ignore
+key.txt.age
 Brewfile
 Brewfile-Amzn
 Brewfile-Darwin-arm64
@@ -24,6 +25,9 @@ scripts/get-persistent-configs
 {{- if not (and (hasKey . "email") (hasSuffix "@microsoft.com" .email)) }}
 .config/zsh/bitbake.zshrc
 .config/zsh/rack_manager.zshrc
+.config/zsh/cde.zshrc
+.config/zsh/agency.zshrc
+.config/zsh/azure_devops.zshrc
 {{- end }}
 
 {{- if (and (ne .chezmoi.os "darwin") (ne .chezmoi.os "linux")) }}
@@ -33,6 +37,7 @@ scripts/render-git
 {{- end }}
 
 {{- if ne .chezmoi.os "darwin" }}
+.config/aerospace
 .config/boop
 .config/zsh/macosx.zshrc
 .config/zsh/midway.zshrc

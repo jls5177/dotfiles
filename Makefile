@@ -13,6 +13,29 @@ LOG_DEBUG = "${LOGGER}" debug
 # Set default goal to "apply"
 default: apply
 
+.PHONY: help
+help:
+	@echo "Personal dotfiles (chezmoi). Usage: make [VAR=value] <goal>"
+	@echo ""
+	@echo "Goals:"
+	@echo "  apply        Apply the chezmoi state to \$$HOME (default goal)"
+	@echo "  status       Show pending changes (auto-updating externals excluded)"
+	@echo "  verify       Verify the destination matches the chezmoi state"
+	@echo "  init         Initialize the chezmoi state/config"
+	@echo "  reinit       Re-run initialization, recreating the config"
+	@echo "  install-tools  Install required tools (homebrew, chezmoi, age)"
+	@echo "  help         Show this help"
+	@echo ""
+	@echo "Variables:"
+	@echo "  ASK=1        Prompt for all config values during (re)init"
+	@echo "  DRYRUN=true  Print chezmoi commands instead of running them"
+	@echo "  VERBOSE=1|2  Enable chezmoi --debug (1) and --verbose (2) output"
+	@echo "  CFG_FILE=... Override the chezmoi config path"
+	@echo ""
+	@echo "Notes:"
+	@echo "  Secrets are age-encrypted; status/apply prompt for the passphrase."
+	@echo "  The 'age' binary is required (installed by install-tools)."
+
 ## Allows the caller to move the destination folder (mostly for testing)
 # export DST_DIR?=$(HOME)/test_home
 

@@ -23,13 +23,31 @@ running Chezmoi.
 
 ## Installation
 
+### Quick start (fresh machine)
+
+On a vanilla **macOS**, **Ubuntu**, or **Arch** system none of `git`, `make`,
+`age`, or `chezmoi` exist yet. The `bootstrap.sh` script installs those prereqs
+with the native package manager, clones this repo, and runs `make` — one command,
+no manual setup:
+
+```shell
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/jls5177/dotfiles/master/bootstrap.sh)"
+```
+
+> Use the command-substitution form above (not `curl … | sh`) so your terminal
+> stays attached — chezmoi's prompts and the age passphrase need a TTY.
+
+Bootstrap honours a few environment variables: `ASK=1` (prompt for name/email),
+`DOTFILES_MINIMAL=1` (skip the Homebrew bundle), `DOTFILES_DIR` (checkout path),
+and `DOTFILES_REF` (branch/tag). Example: `ASK=1 sh -c "$(curl -fsSL …bootstrap.sh)"`.
+
 ### Prerequisites
 
-* [`age`](https://age-encryption.org) must be installed (`brew install age`).
-  It is required to unlock the encrypted identity (`home/key.txt.age`) and is
-  installed automatically by the Brewfile during `make`.
+* [`age`](https://age-encryption.org) is required to unlock the encrypted
+  identity (`home/key.txt.age`). `bootstrap.sh` installs it; otherwise install it
+  from your package manager (`brew install age`, `apt install age`, `pacman -S age`).
 * You will be prompted for the age passphrase whenever Chezmoi needs to decrypt
-  a managed secret (status, diff, apply). Only the repo owner knows this
+  a managed secret (`apply`, `status-secrets`). Only the repo owner knows this
   passphrase; without it the encrypted files cannot be read.
 
 The following environment variables can be set to configure Chezmoi behavior:
@@ -38,13 +56,10 @@ The following environment variables can be set to configure Chezmoi behavior:
 
 For example, you can enable `ASK` by running `ASK=1 make reinit`.
 
-### Default version
+### Manual install (repo already cloned)
 
 ```shell
-mkdir -p ~/jls5177-dotfiles \
-  && cd ~/jls5177-dotfiles \
-  && git clone https://github.com/jls5177/dotfiles.git . \
-  && ASK=1 make
+cd ~/jls5177-dotfiles && ASK=1 make
 ```
 
 ### Rerunning Initialization

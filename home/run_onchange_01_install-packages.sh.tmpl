@@ -19,7 +19,9 @@ run_bundle() {
   if [[ "${DRYRUN}" == "true" ]]; then
     log::always "DRYRUN" "$(ansi --green "brew bundle --file \"${brewfile}\"")"
   else
-    brew bundle install --file "${brewfile}"
+    # --jobs 1 forces sequential installs; parallel installs race on shared
+    # dependency locks (e.g. "process has already locked .../Cellar/go").
+    brew bundle install --jobs 1 --file "${brewfile}"
   fi
 }
 

@@ -60,9 +60,13 @@ cd ~/jls5177-dotfiles && git pull -r && ASK=1 make reinit
 The included makefile is a thin wrapper around Chezmoi commands. Here is a brief breakdown of each supported goal:
 
 * `init` -> `chezmoi init`
-* `apply` -> `chezmoi apply`
-* `status` -> `chezmoi status`
+* `apply` -> `chezmoi apply` (unlocks the age key once, single passphrase prompt)
+* `status` -> `chezmoi status` (excludes encrypted secrets, so it never prompts)
+* `status-secrets` -> like `status` but includes encrypted secrets (one prompt)
 * `verify` -> `chezmoi verify`
+* `help` -> list the available goals and variables
+
+Run `make help` for the full list including supported variables.
 
 ### Helper Scripts
 
@@ -74,11 +78,17 @@ Secrets are encrypted with age against the recipient stored in the Chezmoi
 config. Adding or updating a secret only needs the public recipient (no
 passphrase); reading or applying it requires the passphrase.
 
+To avoid a passphrase prompt for every encrypted file, the wrapper decrypts the
+passphrase-protected identity **once** into an ephemeral plaintext key and points
+Chezmoi at it for that run (the temp key is shredded on exit). So `apply` and
+`status-secrets` prompt a single time, while `status` skips secrets entirely and
+never prompts.
+
 ```shell
 # add/update an encrypted secret
 ./scripts/chez.sh add --encrypt ~/.ssh/id_rsa_msft
 
-# inspect the decrypted contents (prompts for the passphrase)
+# inspect the decrypted contents (prompts for the passphrase once)
 ./scripts/chez.sh cat ~/.ssh/id_rsa_msft
 ```
 

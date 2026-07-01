@@ -19,7 +19,8 @@ help:
 	@echo ""
 	@echo "Goals:"
 	@echo "  apply        Apply the chezmoi state to \$$HOME (default goal)"
-	@echo "  status       Show pending changes (auto-updating externals excluded)"
+	@echo "  status       Show pending changes (secrets & externals excluded, no passphrase)"
+	@echo "  status-secrets Show pending changes including encrypted secrets (one passphrase)"
 	@echo "  verify       Verify the destination matches the chezmoi state"
 	@echo "  init         Initialize the chezmoi state/config"
 	@echo "  reinit       Re-run initialization, recreating the config"
@@ -33,7 +34,8 @@ help:
 	@echo "  CFG_FILE=... Override the chezmoi config path"
 	@echo ""
 	@echo "Notes:"
-	@echo "  Secrets are age-encrypted; status/apply prompt for the passphrase."
+	@echo "  Secrets are age-encrypted. 'status' skips them so it never prompts;"
+	@echo "  'apply'/'status-secrets' unlock the key once (a single passphrase prompt)."
 	@echo "  The 'age' binary is required (installed by install-tools)."
 
 ## Allows the caller to move the destination folder (mostly for testing)
@@ -81,12 +83,18 @@ apply: | ensure-deps $(BOLTDB_FILE)
 .PHONY: status
 status: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "fetching Chezmoi status"
+	@$(SCRIPTS_DIR)/chez.sh status --exclude encrypted,externals
+
+.PHONY: status-secrets
+status-secrets: export CHEZ_DECRYPT=1
+status-secrets: | ensure-deps $(BOLTDB_FILE)
+	@$(LOG_STATUS) "fetching Chezmoi status (including encrypted secrets)"
 	@$(SCRIPTS_DIR)/chez.sh status --exclude externals
 
 .PHONY: verify
 verify: | ensure-deps $(BOLTDB_FILE)
 	@$(LOG_STATUS) "verifying Chezmoi state"
-	@$(SCRIPTS_DIR)/chez.sh verify
+	@$(SCRIPTS_DIR)/chez.sh verify --exclude encrypted,externals
 
 .PHONY: post-chezmoi
 post-chezmoi:

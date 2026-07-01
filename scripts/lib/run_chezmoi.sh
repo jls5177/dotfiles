@@ -8,6 +8,7 @@ IFS=$'\n\t'
 SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/../.. && pwd -P)
 SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/.. && pwd -P)
 source "${SCRIPTS_ROOT}/lib/init.sh"
+source "${SCRIPTS_ROOT}/lib/age_unlock.sh"
 
 # Linux on Go likes to install into the local directory
 export PATH="$HOME/bin:$SRC_ROOT/bin:$PATH"
@@ -47,7 +48,32 @@ fi
 
 # Chezmoi will default to using "~/.config/chezmoi/chezmoi.[yaml|toml|json]"
 if [[ -n "${CFG_DIR}" ]]; then
-  args+=("--config" "${CFG_DIR}")
+  effective_cfg="${CFG_DIR}"
+
+  # For commands that must decrypt secrets, unlock the passphrase-protected age
+  # identity once and point chezmoi at the plaintext identity so it does not
+  # prompt per encrypted file. A throwaway config is used so the committed config
+  # keeps referencing the encrypted key (raw chezmoi on a new machine still works).
+  if [[ "${CMD}" != "init" ]] && [[ "${DRYRUN}" != "true" ]] && age::should_unlock "${CMD}"; then
+    enc_identity="$(awk -F'"' '/^[[:space:]]*identity:/ {print $2; exit}' "${CFG_DIR}")"
+    if [[ -n "${enc_identity}" ]]; then
+      trap age::cleanup EXIT
+      unlocked_id="$(age::unlock_identity "${enc_identity}")" \
+        || log::error_exit "Could not unlock age-encrypted secrets"
+      # Register in this (parent) shell so the EXIT trap can shred it; the
+      # registration inside the command substitution above ran in a subshell.
+      age::_register_tmpfile "${unlocked_id}"
+      tmp_cfg="$(mktemp "${TMPDIR:-/tmp}/chezmoi-cfg.XXXXXX")"
+      age::_register_tmpfile "${tmp_cfg}"
+      sed "s#^\([[:space:]]*identity:[[:space:]]*\).*#\1\"${unlocked_id}\"#" \
+        "${CFG_DIR}" > "${tmp_cfg}"
+      effective_cfg="${tmp_cfg}"
+      # Preserve the real persistent state (run_once/run_onchange) when overriding.
+      args+=("--persistent-state" "$(dirname "${CFG_DIR}")/chezmoistate.boltdb")
+    fi
+  fi
+
+  args+=("--config" "${effective_cfg}")
   if [[ "${CMD}" == "init" ]]; then
     # Init requires the templated config-path to also be defined
     args+=("--config-path" "${CFG_DIR}")

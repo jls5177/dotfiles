@@ -2,6 +2,7 @@
 key.txt.age
 Brewfile
 Brewfile-Amzn
+Brewfile-common
 Brewfile-Darwin-arm64
 Brewfile-Msft
 Brewfile-Ubuntu

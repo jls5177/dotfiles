@@ -1,0 +1,43 @@
+# Cross-platform Homebrew bundle.
+#
+# Bundled on every OS (macOS after Brewfile, Ubuntu after Brewfile-Ubuntu), so it
+# holds the essential tools wanted everywhere. OS-specific packages live in the
+# per-OS Brewfiles (Brewfile, Brewfile-Ubuntu, ...).
+#
+# NOTE: keep brew formulae above the go/npm entries so their runtimes (go, node)
+# are installed first.
+
+# --- Shell / terminal utilities ---
+brew "asciinema"     # Record and share terminal sessions
+brew "duf"           # Disk usage/free, a nicer df
+brew "entr"          # Run commands when files change
+brew "feh"           # X11 image viewer
+brew "glances"       # top/htop alternative
+brew "viu"           # Terminal image viewer
+
+# --- Search / data wrangling ---
+brew "ripgrep"       # Fast grep replacement
+brew "jq"            # JSON processor
+brew "yq"            # YAML/XML/TOML processor
+brew "dasel"         # Query/update JSON, YAML, TOML, XML
+
+# --- Languages & runtimes ---
+brew "go"            # Go toolchain
+brew "node"          # Node.js runtime
+brew "pyenv"         # Python version management
+
+# --- Docs / diagrams ---
+brew "pandoc"        # Markup format conversion
+brew "plantuml"      # UML diagrams
+
+# --- Cloud / dev tooling ---
+brew "gh"            # GitHub CLI
+brew "gnutls"        # GNU TLS library
+brew "lastpass-cli"  # LastPass CLI
+brew "rclone"        # Rsync for cloud storage
+brew "repo"          # Android repo tool
+
+# --- go / npm packages (require the runtimes above) ---
+go "github.com/charmbracelet/gum"  # Glamorous shell scripts
+npm "@github/copilot"              # GitHub Copilot CLI
+npm "corepack"                     # Node package-manager manager

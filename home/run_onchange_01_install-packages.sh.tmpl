@@ -33,6 +33,10 @@ log::always "Installing MacOSX Homebrew packages"
 # Brewfile hash: {{ include "Brewfile" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile"
 
+# Install cross-platform packages
+# Brewfile-common hash: {{ include "Brewfile-common" | sha256sum }}
+run_bundle "${HOME_ROOT}/Brewfile-common"
+
 # log::always "💡 Post install steps to run Yabai" \
 # "    1) Disable System Protection: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
 
@@ -68,6 +72,10 @@ log::always "$(ansi --yellow "Skipping Homebrew package install due to minimal c
 # Install primary homebrew packages
 # Brewfile hash: {{ include "Brewfile-Ubuntu" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile-Ubuntu"
+
+# Install cross-platform packages
+# Brewfile-common hash: {{ include "Brewfile-common" | sha256sum }}
+run_bundle "${HOME_ROOT}/Brewfile-common"
 
 # Install Msft homebrew packages
 {{- if (and (hasKey . "email") (hasSuffix "@microsoft.com" .email)) }}

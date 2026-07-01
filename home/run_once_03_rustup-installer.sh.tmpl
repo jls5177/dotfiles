@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Install the Rust toolchain via the official rustup installer (https://rustup.rs)
+# rather than Homebrew, so it behaves identically on macOS, Ubuntu, and Arch.
+# Runs once per machine (chezmoi run_once); PATH is handled by dot_config/zsh/rust.zshrc.
+
+{{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") }}
+if command -v rustup >/dev/null 2>&1 || [ -x "${HOME}/.cargo/bin/rustup" ]; then
+  echo "rustup already installed, skipping"
+else
+  echo "Installing Rust via rustup (https://rustup.rs)"
+  # -y: non-interactive; --no-modify-path: leave PATH to rust.zshrc
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
+{{ end }}

@@ -8,7 +8,7 @@
 # Run it so that the terminal stays attached (needed for the config prompts and
 # the age passphrase) -- use command substitution, NOT a pipe:
 #
-#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/jls5177/dotfiles/master/bootstrap.sh)"
+#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/jls5177/dotfiles/chezmoi/bootstrap.sh)"
 #
 # Optional environment variables:
 #   DOTFILES_REPO   git URL to clone       (default: https://github.com/jls5177/dotfiles.git)

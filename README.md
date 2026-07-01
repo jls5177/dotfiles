@@ -31,7 +31,7 @@ with the native package manager, clones this repo, and runs `make` — one comma
 no manual setup:
 
 ```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/jls5177/dotfiles/master/bootstrap.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/jls5177/dotfiles/chezmoi/bootstrap.sh)"
 ```
 
 > Use the command-substitution form above (not `curl … | sh`) so your terminal

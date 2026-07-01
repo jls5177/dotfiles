@@ -62,10 +62,11 @@ detect_os() {
 }
 
 install_chezmoi_get() {
-  # chezmoi is not in apt; use the official installer into ~/.local/bin.
+  # chezmoi is not in apt; use the official installer. Install into ~/bin to match
+  # where install_tools.sh looks (the Makefile wrappers put ~/bin on PATH).
   info "Installing chezmoi via get.chezmoi.io"
-  mkdir -p "$HOME/.local/bin"
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+  mkdir -p "$HOME/bin"
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
 }
 
 prereqs_macos() {

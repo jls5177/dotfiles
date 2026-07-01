@@ -57,6 +57,30 @@ util::host_platform() {
   echo "$(util::host_os)/$(util::host_arch)"
 }
 
+# Ensure Homebrew is on PATH regardless of how the shell was launched.
+# Covers macOS (Apple Silicon + Intel) and Linux (system + per-user linuxbrew).
+# Safe to call when brew is absent (no-op); returns 0 either way.
+util::setup_brew() {
+  # Already on PATH -> make sure the full env is loaded and return.
+  if util::is_available brew; then
+    eval "$(brew shellenv)"
+    return 0
+  fi
+
+  local candidate
+  for candidate in \
+    /opt/homebrew/bin/brew \
+    /usr/local/bin/brew \
+    /home/linuxbrew/.linuxbrew/bin/brew \
+    "${HOME}/.linuxbrew/bin/brew"; do
+    if [ -x "${candidate}" ]; then
+      eval "$("${candidate}" shellenv)"
+      return 0
+    fi
+  done
+  return 0
+}
+
 # Runs the given command and ignores any err signals
 util::run_no_err() {
   # traps are ignored in conditions, so catching and ignoring any errors

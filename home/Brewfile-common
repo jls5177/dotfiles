@@ -1,19 +1,27 @@
 # Cross-platform Homebrew bundle.
 #
 # Bundled on every OS (macOS after Brewfile, Ubuntu after Brewfile-Ubuntu), so it
-# holds the essential tools wanted everywhere. OS-specific packages live in the
-# per-OS Brewfiles (Brewfile, Brewfile-Ubuntu, ...).
+# holds the tools wanted everywhere. Truly OS-specific packages live in the per-OS
+# Brewfiles (Brewfile, Brewfile-Ubuntu, ...).
 #
 # NOTE: keep brew formulae above the go/npm entries so their runtimes (go, node)
 # are installed first.
 
+# --- Taps ---
+tap "bgreenwell/lstr"
+tap "charmbracelet/tap"
+
 # --- Shell / terminal utilities ---
 brew "asciinema"     # Record and share terminal sessions
 brew "duf"           # Disk usage/free, a nicer df
+brew "dust"          # Nicer du, written in Rust
 brew "entr"          # Run commands when files change
+brew "eza"           # Modern replacement for ls
 brew "feh"           # X11 image viewer
 brew "glances"       # top/htop alternative
+brew "lnav"          # Log file viewer/analyzer
 brew "viu"           # Terminal image viewer
+brew "bgreenwell/lstr/lstr", trusted: true  # Fast directory tree viewer
 
 # --- Search / data wrangling ---
 brew "ripgrep"       # Fast grep replacement
@@ -21,21 +29,35 @@ brew "jq"            # JSON processor
 brew "yq"            # YAML/XML/TOML processor
 brew "dasel"         # Query/update JSON, YAML, TOML, XML
 
-# --- Languages & runtimes ---
+# --- Languages, runtimes & build ---
 brew "go"            # Go toolchain
 brew "node"          # Node.js runtime
+brew "fnm"           # Fast Node.js version manager
 brew "pyenv"         # Python version management
+brew "meson"         # Fast, user-friendly build system
+
+# --- Python ---
+brew "tox"           # Virtualenv-based test runner
+brew "pdm"           # Python package/dependency manager
+brew "hatch"         # Python project management
+brew "jupyterlab"    # JupyterLab notebook environment
 
 # --- Docs / diagrams ---
-brew "pandoc"        # Markup format conversion
-brew "plantuml"      # UML diagrams
+brew "pandoc"           # Markup format conversion
+brew "pandoc-crossref"  # Pandoc numbering/cross-referencing filter
+brew "plantuml"         # UML diagrams
 
 # --- Cloud / dev tooling ---
+brew "azure-cli"     # Microsoft Azure CLI
 brew "gh"            # GitHub CLI
 brew "gnutls"        # GNU TLS library
-brew "lastpass-cli"  # LastPass CLI
 brew "rclone"        # Rsync for cloud storage
 brew "repo"          # Android repo tool
+brew "west"          # Zephyr meta-tool
+
+# --- Charm tools ---
+brew "charmbracelet/tap/charm", trusted: true  # Charm cloud/host tool
+brew "skate"                                    # Charm personal key-value store
 
 # --- go / npm packages (require the runtimes above) ---
 go "github.com/charmbracelet/gum"  # Glamorous shell scripts

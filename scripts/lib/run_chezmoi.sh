@@ -68,6 +68,15 @@ if [[ -n "${CFG_DIR}" ]]; then
       sed "s#^\([[:space:]]*identity:[[:space:]]*\).*#\1\"${unlocked_id}\"#" \
         "${CFG_DIR}" > "${tmp_cfg}"
       effective_cfg="${tmp_cfg}"
+      # The temp config has no recognizable extension, so tell chezmoi its format
+      # (derived from the real config's extension; defaults to yaml).
+      cfg_fmt="${CFG_DIR##*.}"
+      case "${cfg_fmt}" in
+        yaml|yml) cfg_fmt="yaml" ;;
+        toml|json) ;;
+        *) cfg_fmt="yaml" ;;
+      esac
+      args+=("--config-format" "${cfg_fmt}")
       # Preserve the real persistent state (run_once/run_onchange) when overriding.
       args+=("--persistent-state" "$(dirname "${CFG_DIR}")/chezmoistate.boltdb")
     fi

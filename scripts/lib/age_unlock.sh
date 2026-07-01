@@ -47,6 +47,7 @@ age::unlock_identity() {
 
   log::info "Unlocking age identity (enter passphrase once)" >&2
   if ! age -d -o "${idfile}" "${enc}" </dev/tty; then
+    rm -f "${idfile}"
     log::error "failed to unlock age identity"
     return 1
   fi

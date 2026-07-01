@@ -57,6 +57,21 @@ util::host_platform() {
   echo "$(util::host_os)/$(util::host_arch)"
 }
 
+# Best-effort Linux distro family based on /etc/os-release.
+# Prints "ubuntu" (debian-like), "arch" (arch-like), or "unknown".
+util::linux_distro() {
+  local id="" id_like=""
+  if [ -r /etc/os-release ]; then
+    id="$(. /etc/os-release 2>/dev/null && printf '%s' "${ID:-}")"
+    id_like="$(. /etc/os-release 2>/dev/null && printf '%s' "${ID_LIKE:-}")"
+  fi
+  case " ${id} ${id_like} " in
+    *arch*) echo "arch" ;;
+    *debian*|*ubuntu*) echo "ubuntu" ;;
+    *) echo "unknown" ;;
+  esac
+}
+
 # Ensure Homebrew is on PATH regardless of how the shell was launched.
 # Covers macOS (Apple Silicon + Intel) and Linux (system + per-user linuxbrew).
 # Safe to call when brew is absent (no-op); returns 0 either way.

@@ -49,6 +49,26 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
+    # Ensure a C/C++ toolchain. Many Homebrew taps ship no Linux bottles, so brew
+    # builds those formulae from source and requires a compiler (otherwise it
+    # fails with "Install Clang or run `brew install gcc`").
+    if ! util::is_available cc && ! util::is_available gcc; then
+        case "$(util::linux_distro)" in
+            ubuntu)
+                ansi --green "Installing build-essential (compiler for Homebrew source builds)"
+                sudo apt-get update -y
+                sudo apt-get install -y build-essential procps file
+                ;;
+            arch)
+                ansi --green "Installing base-devel (compiler for Homebrew source builds)"
+                sudo pacman -Sy --needed --noconfirm base-devel
+                ;;
+            *)
+                ansi --yellow "Unknown Linux distro; install a C compiler (gcc) if Homebrew source builds fail"
+                ;;
+        esac
+    fi
+
      if util::is_available chezmoi; then
         ansi --yellow "Chezmoi is installed. Skipping"
     else

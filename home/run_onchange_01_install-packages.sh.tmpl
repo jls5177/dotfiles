@@ -88,22 +88,3 @@ run_bundle "${HOME_ROOT}/Brewfile-Msft"
 {{ end }}
 
 {{ end }}
-
-{{- if eq .osid "linux-ubuntu" }}
-log::always "Detected Ubuntu OS"
-
-# Install Ubuntu packages
-log::always "Installing Ubuntu packages"
-sudo apt install -y zsh direnv byobu python3 python-is-python3 virtualenv sshpass net-tools golang python3-pip unzip
-
-# Install Charmbracelet (Gum) applications
-log::always "Installing Charmbracelet packages"
-{{- if lt .osversion "24.04" }}
-log::always "Installing Golang from homebrew as Ubunut 22.04 does not have Golang 20 or greater"
-# fallback to homebrew on Ubuntu 22.04 as Golang is stuck at v18
-# Moved to Brewfile-Ubuntu to cleanup installed packages
-# brew install go
-{{ end }}
-go install github.com/charmbracelet/gum@latest
-
-{{ end }}

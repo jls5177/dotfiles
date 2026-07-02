@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Use Chezmoi to get source root as it runs the script from temp files
+HOME_ROOT="{{ .chezmoi.sourceDir }}"
+SRC_ROOT=$(cd "${HOME_ROOT}"/.. && pwd -P)
+source "${SRC_ROOT}/scripts/common.sh"
+
+# Ubuntu system packages installed via apt. This is a run_once script, so it runs
+# on a fresh machine and again only when this script changes -- NOT on every
+# Brewfile edit (the run_onchange bundle script handles those, without sudo).
+{{ if eq .osid "linux-ubuntu" }}
+log::always "Installing Ubuntu apt packages"
+sudo apt install -y zsh direnv byobu python3 python-is-python3 virtualenv sshpass net-tools golang python3-pip unzip
+{{ end }}

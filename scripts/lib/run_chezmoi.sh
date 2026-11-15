@@ -28,6 +28,23 @@ if [[ -z "${CMD}" ]]; then
   log::error_exit "No command specified, cannot execute Chezmoi"
 fi
 
+if [[ -n "${DOTFILES_SHELL:-}" ]]; then
+  case "${DOTFILES_SHELL}" in
+    zsh|fish) ;;
+    *) log::error_exit "DOTFILES_SHELL must be zsh or fish" ;;
+  esac
+fi
+
+if [[ -f "${CFG_FILE:-}" && "${DRYRUN}" != "true" ]]; then
+  saved_shell="$(chezmoi --config "${CFG_FILE}" execute-template \
+    '{{ get (get . "config_state" | default dict) "shell" | default "zsh" }}')"
+  if [[ "${CMD}" == "init" ]]; then
+    export DOTFILES_SHELL="${DOTFILES_SHELL:-$saved_shell}"
+  elif [[ -n "${DOTFILES_SHELL:-}" && "${DOTFILES_SHELL}" != "${saved_shell}" ]]; then
+    log::error_exit "Shell selection is saved as ${saved_shell}. Run DOTFILES_SHELL=${DOTFILES_SHELL} make reinit, then make apply."
+  fi
+fi
+
 # build the list of arguments to pass to Chezmoi
 args=("$CMD")
 

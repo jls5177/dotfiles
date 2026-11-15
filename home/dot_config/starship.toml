@@ -1,0 +1,13 @@
+add_newline = false
+format = "$username$hostname$directory$git_branch$git_status$python$nodejs$rust$golang$conda$cmd_duration$line_break$character"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = false
+
+[hostname]
+ssh_only = true
+
+[character]
+success_symbol = "[>](bold green)"
+error_symbol = "[>](bold red)"

@@ -10,6 +10,7 @@ source "${SCRIPTS_ROOT}/lib/init.sh"
 
 # Make sure common user bin directories are on the path
 export PATH="$HOME/bin:$SRC_ROOT/bin:/opt/homebrew/bin:$PATH"
+util::setup_brew
 
 # Single environment: secrets are encrypted in-repo with age (see home/key.txt.age)
 export SRC_DIR="${SRC_DIR:-$SRC_ROOT}"

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HOME_ROOT="{{ .chezmoi.sourceDir }}"
+# shellcheck source=/dev/null
+source "${HOME_ROOT}/../scripts/common.sh"
+
+shell_name="{{ includeTemplate "shell" . }}"
+{{ if eq .chezmoi.os "darwin" }}
+brew install "${shell_name}" starship
+{{ else if eq .chezmoi.os "linux" }}
+if ! command -v "${shell_name}" >/dev/null 2>&1; then
+  case "$(util::linux_distro)" in
+    ubuntu)
+      util::run_privileged apt-get update
+      util::run_privileged apt-get install -y "${shell_name}"
+      ;;
+    arch)
+      util::run_privileged pacman -S --needed --noconfirm "${shell_name}"
+      ;;
+    *)
+      printf 'Install %s with your platform package manager, then rerun make apply.\n' "${shell_name}" >&2
+      exit 1
+      ;;
+  esac
+fi
+command -v starship >/dev/null 2>&1 || brew install starship
+{{ else }}
+command -v "${shell_name}" >/dev/null 2>&1 || {
+  printf 'Install %s with your platform package manager, then rerun make apply.\n' "${shell_name}" >&2
+  exit 1
+}
+command -v starship >/dev/null 2>&1 || brew install starship
+{{ end }}

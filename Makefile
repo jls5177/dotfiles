@@ -1,5 +1,13 @@
 LOGFILE=/tmp/dotfiles.log
 
+ifneq ($(strip $(DOTFILES_SHELL)),)
+ifneq ($(DOTFILES_SHELL),zsh)
+ifneq ($(DOTFILES_SHELL),fish)
+$(error DOTFILES_SHELL must be zsh or fish)
+endif
+endif
+endif
+
 # Setup directory helper variables
 export SOURCE_DIR  := $(CURDIR)
 export SCRIPTS_DIR := $(CURDIR)/scripts
@@ -25,10 +33,13 @@ help:
 	@echo "  init         Initialize the chezmoi state/config"
 	@echo "  reinit       Re-run initialization, recreating the config"
 	@echo "  install-tools  Install required tools (homebrew, chezmoi, age)"
+	@echo "  test         Validate isolated shell deployment and helper behavior"
 	@echo "  help         Show this help"
 	@echo ""
 	@echo "Variables:"
 	@echo "  ASK=1        Prompt for all config values during (re)init"
+	@echo "  DOTFILES_SHELL=zsh|fish  Select shell during (re)init (default: zsh)"
+	@echo "  DOTFILES_MINIMAL=1  Skip optional Homebrew bundles during initialization"
 	@echo "  DRYRUN=true  Print chezmoi commands instead of running them"
 	@echo "  VERBOSE=1|2  Enable chezmoi --debug (1) and --verbose (2) output"
 	@echo "  CFG_FILE=... Override the chezmoi config path"
@@ -48,7 +59,7 @@ export DRYRUN?=false
 .PHONY: install-tools
 install-tools:
 	@$(LOG_STATUS) "Installing required tools.."
-	@bash ./scripts/install_tools.sh | tee -a $(LOGFILE) || exit 1
+	@bash -o pipefail -c 'bash ./scripts/install_tools.sh 2>&1 | tee -a "$$1"' -- "$(LOGFILE)"
 
 .PHONY: start-deps
 start-deps:
@@ -56,6 +67,10 @@ start-deps:
 
 .PHONY: ensure-deps
 ensure-deps: | start-deps install-tools
+
+.PHONY: test
+test:
+	@python3 tests/test_shells.py
 
 .PHONY: init
 init: | ensure-deps

@@ -2,6 +2,22 @@
 
 This document contains various steps I took when creating this repo.
 
+## Shell selection
+
+```shell
+# Save a shell selection on this machine, then deploy it.
+DOTFILES_SHELL=fish make reinit
+make apply
+
+# Return to Zsh (existing Fish files remain but are no longer managed).
+DOTFILES_SHELL=zsh make reinit
+make apply
+```
+
+Both shells share `~/.config/starship.toml`; only Zsh downloads Oh My Zsh.
+Follow the post-apply instructions to change your login shell manually.
+Fish uses direnv/fnm rather than Zsh autoenv/NVM; see the README migration table.
+
 ## Managing secrets with age
 
 Secrets are encrypted in-repo with age, unlocked by a passphrase-protected

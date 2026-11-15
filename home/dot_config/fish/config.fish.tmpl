@@ -1,0 +1,8 @@
+# conf.d shards are loaded by Fish before this file.
+if status is-interactive
+    if command -q starship
+        starship init fish | source
+    else
+        echo "dotfiles: starship is missing; rerun make apply" >&2
+    end
+end

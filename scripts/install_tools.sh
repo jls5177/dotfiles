@@ -4,24 +4,30 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE}")"/.. && pwd -P)
-SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE}")" && pwd -P)
+SRC_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd -P)
+SCRIPTS_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+# shellcheck source=/dev/null
 source "${SCRIPTS_ROOT}/lib/init.sh"
 
 # Make sure common user bin directories are on the path
 export PATH="$HOME/bin:$SRC_ROOT/bin:/opt/homebrew/bin:$PATH"
 
-log::info "HOST_OS=$(util::host_os)"
-if [[ "$(util::host_os)" == "darwin"* ]]; then
-    # install homebrew
-    if util::is_available brew; then
-        ansi --yellow "Homebrew is installed. Skipping"
-    else
-        ansi --green "Homebrew not installed. Installing..."
-        NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew analytics off
-    fi
+host_os="$(util::host_os)"
+log::info "HOST_OS=${host_os}"
+case "${host_os}" in
+    darwin|linux) ;;
+    *) log::error_exit "Tool installation is not supported on ${host_os}" ;;
+esac
 
+util::setup_brew
+if util::is_available brew; then
+    ansi --yellow "Homebrew is installed. Skipping"
+else
+    ansi --green "Homebrew not installed. Installing..."
+    util::install_homebrew "$(util::homebrew_prefix)"
+fi
+
+if [[ "${host_os}" == darwin ]]; then
     # Install Chezmoi
     if util::is_available chezmoi; then
         ansi --yellow "Chezmoi is installed. Skipping"
@@ -37,18 +43,7 @@ if [[ "$(util::host_os)" == "darwin"* ]]; then
         ansi --green "age not installed. Installing..."
         brew install age
     fi
-elif [[ "$(util::host_os)" == "linux"* ]]; then
-    ansi --yellow "Warning Linux support is untested."
-    # install homebrew
-    if util::is_available /home/linuxbrew/.linuxbrew/bin/brew; then
-        ansi --yellow "Homebrew is installed. Skipping"
-    else
-        ansi --green "Homebrew not installed. Installing..."
-        NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        /home/linuxbrew/.linuxbrew/bin/brew analytics off
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
-
+elif [[ "${host_os}" == linux ]]; then
     # Ensure a C/C++ toolchain. Many Homebrew taps ship no Linux bottles, so brew
     # builds those formulae from source and requires a compiler (otherwise it
     # fails with "Install Clang or run `brew install gcc`").
@@ -56,12 +51,12 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         case "$(util::linux_distro)" in
             ubuntu)
                 ansi --green "Installing build-essential (compiler for Homebrew source builds)"
-                sudo apt-get update -y
-                sudo apt-get install -y build-essential procps file
+                util::run_privileged apt-get update -y
+                util::run_privileged apt-get install -y build-essential procps file
                 ;;
             arch)
                 ansi --green "Installing base-devel (compiler for Homebrew source builds)"
-                sudo pacman -Sy --needed --noconfirm base-devel
+                util::run_privileged pacman -S --needed --noconfirm base-devel
                 ;;
             *)
                 ansi --yellow "Unknown Linux distro; install a C compiler (gcc) if Homebrew source builds fail"
@@ -69,14 +64,18 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         esac
     fi
 
-     if util::is_available chezmoi; then
+    if util::is_available chezmoi; then
         ansi --yellow "Chezmoi is installed. Skipping"
     else
         ansi --green "Chezmoi not installed. Installing..."
 
         # Set the bin directory as Chezmoi uses this as the install directory
-        export BINDIR="$HOME/bin"
-        sh -c "$(wget -qO- https://chezmoi.io/get)" || sh -c "$(curl -fsLS https://chezmoi.io/get)"
+        installer="$(curl -fsLS https://get.chezmoi.io)" \
+            || log::error_exit "Could not download the Chezmoi installer"
+        [[ -n "${installer}" ]] || log::error_exit "The downloaded Chezmoi installer is empty"
+        mkdir -p "$HOME/bin"
+        sh -c "${installer}" -- -b "$HOME/bin"
+        util::is_available chezmoi || log::error_exit "The Chezmoi installer completed but chezmoi could not be found"
     fi
 
     # Install age (required to decrypt the passphrase-protected secrets before apply)
@@ -84,6 +83,6 @@ elif [[ "$(util::host_os)" == "linux"* ]]; then
         ansi --yellow "age is installed. Skipping"
     else
         ansi --green "age not installed. Installing..."
-        /home/linuxbrew/.linuxbrew/bin/brew install age
+        brew install age
     fi
 fi

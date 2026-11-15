@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Explicit interpreter boundary for command-only helpers, never shell startup.
+set -o pipefail
+group="${1:-}"
+command_name="${2:-}"
+shift 2 || exit 2
+case "${group}:${command_name}" in
+  forgit:forgit::*)
+    library=forgit
+    # fzf previews contain Bash syntax even when the login shell is Fish.
+    SHELL="$(command -v bash)"
+    export SHELL ;;
+  rm:ssh-rm|rm:ssh-bmc|rm:ssh-bmc-su|rm:scp-bmc|rm:scp-bmc-su|rm:sftp-rm|rm:rmPortForward|rm:ip2dec|rm:clean_control_chars|rm:filter_output|rm:format_line|rm:change-rm-password|rm:change-bmc-password|rm:change-bmc-password-su|rm:ssh-port-tunnelling)
+    library=rack_manager ;;
+  ado:ado-push|ado:ado-pull|ado:ado-fetch) library=azure_devops ;;
+  *) printf 'Unknown dotfiles helper: %s %s\n' "$group" "$command_name" >&2; exit 2 ;;
+esac
+export FORGIT_NO_ALIASES=1
+# shellcheck source=/dev/null
+source "$HOME/.config/shell/${library}.bash"
+if ! declare -F "$command_name" >/dev/null; then
+  printf 'Unknown dotfiles function: %s\n' "$command_name" >&2
+  exit 2
+fi
+"$command_name" "$@"

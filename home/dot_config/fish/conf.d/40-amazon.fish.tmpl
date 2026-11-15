@@ -1,0 +1,65 @@
+fish_add_path --path "$HOME/.toolbox/bin" "$HOME/perl5/bin"
+set -gx --path PERL5LIB $PERL5LIB
+if not contains -- "$HOME/perl5/lib/perl5" $PERL5LIB
+    set -p PERL5LIB "$HOME/perl5/lib/perl5"
+end
+set -gx --path PERL_LOCAL_LIB_ROOT $PERL_LOCAL_LIB_ROOT
+if not contains -- "$HOME/perl5" $PERL_LOCAL_LIB_ROOT
+    set -p PERL_LOCAL_LIB_ROOT "$HOME/perl5"
+end
+set -gx PERL_MB_OPT "--install_base \"$HOME/perl5\""
+set -gx PERL_MM_OPT "INSTALL_BASE=$HOME/perl5"
+{{ if and (eq .email "simoju@amazon.com") (eq .chezmoi.os "linux") }}
+set -gx JAVA_HOME /apollo/env/JavaSE8/jdk1.8
+fish_add_path --path "$JAVA_HOME/bin" /apollo/env/Simoju-Dev-Tools/bin
+{{ end }}
+if not status is-interactive
+    return
+end
+alias bb brazil-build
+alias bbs 'brazil-build server'
+alias bbc 'brazil-build clean'
+alias bbr 'brazil-build release'
+alias bp brazil-path
+alias bre brazil-runtime-exec
+alias bsync 'brazil ws sync --md'
+alias bshow 'brazil ws show'
+alias bbt 'brazil-build -p'
+alias bbta 'brazil-build -p -verbose'
+alias bwsclean 'brazil workspace --clean'
+alias third-party-promote "$HOME/.toolbox/bin/brazil-third-party-tool promote"
+alias third-party "$HOME/.toolbox/bin/brazil-third-party-tool"
+alias sam-toolkit 'brazil-build-tool-exec sam'
+
+function brc
+    if test (count $argv) -ne 1
+        echo "Usage: brc <command-string>" >&2
+        return 2
+    end
+    brazil-recursive-cmd (printf 'echo "Executing command in $name" && %s && echo ""' "$argv[1]")
+end
+function brca
+    if test (count $argv) -ne 1
+        echo "Usage: brca <command-string>" >&2
+        return 2
+    end
+    brazil-recursive-cmd -all (printf 'echo "Executing command in $name" && %s && echo ""' "$argv[1]")
+end
+function startOdinTunnel
+    stopOdinTunnel; or return
+    ssh -f -N -M -S /tmp/odintunnelsession -L 2009:127.0.0.1:2009 "$USER-clouddesk.aka.corp.amazon.com"
+end
+function stopOdinTunnel
+    if test -S /tmp/odintunnelsession
+        ssh -S /tmp/odintunnelsession -O exit "$USER-clouddesk.aka.corp.amazon.com"
+    end
+end
+function git-package
+    if test (count $argv) -ne 1
+        echo "Usage: git-package <package>" >&2
+        return 2
+    end
+    cd "$HOME/code"; or return
+    git clone "ssh://git.amazon.com/pkg/$argv[1]"; or return
+    cd "$argv[1]"
+end

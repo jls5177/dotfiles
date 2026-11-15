@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck source=/dev/null
+source "{{ .chezmoi.sourceDir }}/../scripts/common.sh"
+
+shell_path="$(command -v {{ includeTemplate "shell" . }})"
+{{ if eq .chezmoi.os "darwin" }}
+login_shell="$(dscl . -read "/Users/$(id -un)" UserShell | awk '{print $2}')"
+{{ else }}
+login_shell="$(getent passwd "$(id -un)" | cut -d: -f7)"
+{{ end }}
+if [[ "${login_shell}" != "${shell_path}" ]]; then
+  printf 'Dotfiles configured for %s. Your login shell has not been changed.\n' "${shell_path}"
+  if ! grep -Fxq "${shell_path}" /etc/shells; then
+    printf 'First ask your administrator to add %s to /etc/shells.\n' "${shell_path}"
+  fi
+  printf 'To switch manually: chsh -s %q\nThen start a new login session (Kitty follows your login shell).\n' "${shell_path}"
+fi

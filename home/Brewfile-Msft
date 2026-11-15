@@ -6,4 +6,4 @@ brew "azure-cli"
 #brew "bicep"
 
 # Install Microsoft Edge
-cask "microsoft-edge"
+cask "microsoft-edge" if OS.mac?

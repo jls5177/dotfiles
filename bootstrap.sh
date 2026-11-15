@@ -15,12 +15,18 @@
 #   DOTFILES_DIR    checkout location      (default: $HOME/jls5177-dotfiles)
 #   DOTFILES_REF    branch/tag to checkout (default: repo default)
 #   ASK=1           prompt for name/email during chezmoi init
+#   DOTFILES_SHELL  zsh (default) or fish; saved during chezmoi init
 
 set -eu
 
 REPO_URL="${DOTFILES_REPO:-https://github.com/jls5177/dotfiles.git}"
 DEST="${DOTFILES_DIR:-$HOME/jls5177-dotfiles}"
 REF="${DOTFILES_REF:-}"
+
+case "${DOTFILES_SHELL:-zsh}" in
+  zsh|fish) ;;
+  *) printf '%s\n' "DOTFILES_SHELL must be zsh or fish" >&2; exit 1 ;;
+esac
 
 # Make user-local bin dirs visible so freshly-installed tools are found.
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
@@ -31,31 +37,64 @@ die()  { printf '\033[0;31mERROR:\033[0m %s\n' "$*" >&2; exit 1; }
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
-# Prefix privileged commands with sudo unless already root.
-SUDO=""
-if [ "$(id -u)" -ne 0 ]; then
-  if have sudo; then
-    SUDO="sudo"
-  else
-    warn "not root and sudo not found; package installs may fail"
+ensure_sudo() {
+  [ "$(id -u)" -ne 0 ] || return 0
+  have sudo || die "Administrator access is required, but sudo is not installed. Ask your administrator to provision the tools."
+  if sudo -n -v 2>/dev/null; then
+    return 0
   fi
-fi
+  if [ -t 0 ] && [ -z "${NONINTERACTIVE:-}" ] && [ -z "${CI:-}" ]; then
+    info "Administrator access is required; authenticating with sudo."
+    sudo -v || die "Sudo authentication failed. Verify your administrator access and retry."
+  else
+    die "Sudo authentication is required. Run 'sudo -v' in a terminal and retry in that terminal, or ask your administrator to provision the tools for unattended installation."
+  fi
+}
+
+run_privileged() {
+  if [ "$(id -u)" -eq 0 ]; then
+    "$@"
+  else
+    ensure_sudo
+    sudo -n "$@"
+  fi
+}
+
+setup_brew() {
+  if ! have brew; then
+    for brew_candidate in /opt/homebrew/bin/brew /usr/local/bin/brew \
+      /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"; do
+      if [ -x "$brew_candidate" ]; then
+        PATH="$(dirname "$brew_candidate"):$PATH"
+        export PATH
+        break
+      fi
+    done
+  fi
+  if have brew; then
+    brew_environment="$(brew shellenv sh)" || die "Could not load the Homebrew environment."
+    eval "$brew_environment"
+  fi
+}
 
 detect_os() {
   case "$(uname -s)" in
     Darwin) echo "macos" ;;
     Linux)
       os_id=""
-      if [ -r /etc/os-release ]; then
-        # shellcheck disable=SC1091
-        . /etc/os-release
+      os_release_file="${1:-/etc/os-release}"
+      if [ -r "$os_release_file" ]; then
+        # shellcheck source=/dev/null
+        . "$os_release_file"
         os_id="${ID:-} ${ID_LIKE:-}"
       fi
-      case "$os_id" in
-        *arch*) echo "arch" ;;
-        *debian*|*ubuntu*) echo "ubuntu" ;;
-        *) echo "linux-unknown" ;;
-      esac
+      for os_family in $os_id; do
+        case "$os_family" in
+          arch) echo "arch"; return ;;
+          debian|ubuntu) echo "ubuntu"; return ;;
+        esac
+      done
+      echo "linux-unknown"
       ;;
     *) echo "unsupported" ;;
   esac
@@ -66,35 +105,47 @@ install_chezmoi_get() {
   # where install_tools.sh looks (the Makefile wrappers put ~/bin on PATH).
   info "Installing chezmoi via get.chezmoi.io"
   mkdir -p "$HOME/bin"
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
+  chezmoi_installer="$(curl -fsLS https://get.chezmoi.io)" || die "Could not download the Chezmoi installer."
+  [ -n "$chezmoi_installer" ] || die "The downloaded Chezmoi installer is empty."
+  sh -c "$chezmoi_installer" -- -b "$HOME/bin"
 }
 
 prereqs_macos() {
   # Homebrew installs the Command Line Tools (git + make) as part of setup.
+  setup_brew
   if ! have brew; then
     info "Installing Homebrew (also provides git + make)"
-    NONINTERACTIVE=1 /bin/bash -c \
-      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew_parent=/opt/homebrew
+    [ "$(uname -m)" = arm64 ] || brew_parent=/usr/local
+    while [ ! -e "$brew_parent" ]; do
+      brew_parent="$(dirname "$brew_parent")"
+    done
+    if [ ! -w "$brew_parent" ] || [ ! -x "$brew_parent" ]; then
+      ensure_sudo
+    fi
+    brew_installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+      || die "Could not download the Homebrew installer."
+    [ -n "$brew_installer" ] || die "The downloaded Homebrew installer is empty."
+    NONINTERACTIVE=1 /bin/bash -c "$brew_installer"
+    setup_brew
+    have brew || die "The Homebrew installer completed but brew could not be found."
   fi
-  # Ensure brew is on PATH for this session (Apple Silicon or Intel).
-  if [ -x /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  elif [ -x /usr/local/bin/brew ]; then
-    eval "$(/usr/local/bin/brew shellenv)"
+  if ! have age || ! have chezmoi; then
+    info "Installing age + chezmoi via Homebrew"
+    brew install age chezmoi
   fi
-  have age && have chezmoi || { info "Installing age + chezmoi via Homebrew"; brew install age chezmoi; }
 }
 
 prereqs_ubuntu() {
   info "Installing git, make, age via apt"
-  $SUDO apt-get update -y
-  $SUDO apt-get install -y git make age curl ca-certificates
+  run_privileged apt-get update -y
+  run_privileged apt-get install -y git make age curl ca-certificates
   have chezmoi || install_chezmoi_get
 }
 
 prereqs_arch() {
   info "Installing git, make, age, chezmoi via pacman"
-  $SUDO pacman -Sy --needed --noconfirm git make age chezmoi
+  run_privileged pacman -Sy --needed --noconfirm git make age chezmoi
 }
 
 main() {
@@ -125,7 +176,7 @@ main() {
   info "Running make in $DEST"
   cd "$DEST"
   make
-  info "Done. Re-run with 'ASK=1 make reinit' to change your name/email."
+  info "Done. Use 'DOTFILES_SHELL=fish make reinit' then 'make apply' to switch shell configuration."
 }
 
 main "$@"

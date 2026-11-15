@@ -1,4 +1,5 @@
 {{ if (or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux")) }}
+{{ if eq (includeTemplate "shell" .) "zsh" }}
 [".oh-my-zsh"]
     type = "archive"
     url = "https://github.com/ohmyzsh/ohmyzsh/archive/master.tar.gz"
@@ -30,6 +31,7 @@
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
+{{ end }}
 [".config/programmingexcuses"]
     type = "archive"
     url = "https://github.com/pixelastic/programmingexcuses.sh/archive/master.tar.gz"

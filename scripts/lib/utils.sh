@@ -61,39 +61,119 @@ util::host_platform() {
 # Prints "ubuntu" (debian-like), "arch" (arch-like), or "unknown".
 util::linux_distro() {
   local id="" id_like=""
-  if [ -r /etc/os-release ]; then
-    id="$(. /etc/os-release 2>/dev/null && printf '%s' "${ID:-}")"
-    id_like="$(. /etc/os-release 2>/dev/null && printf '%s' "${ID_LIKE:-}")"
+  local release_file="${1:-/etc/os-release}"
+  if [ -r "${release_file}" ]; then
+    # shellcheck source=/dev/null
+    id="$(. "${release_file}" && printf '%s' "${ID:-}")" || return
+    # shellcheck source=/dev/null
+    id_like="$(. "${release_file}" && printf '%s' "${ID_LIKE:-}")" || return
   fi
-  case " ${id} ${id_like} " in
-    *arch*) echo "arch" ;;
-    *debian*|*ubuntu*) echo "ubuntu" ;;
-    *) echo "unknown" ;;
-  esac
+  local family
+  local -a families=()
+  IFS=' ' read -r -a families <<< "${id_like}"
+  for family in "${id}" "${families[@]}"; do
+    case "${family}" in
+      arch) echo "arch"; return ;;
+      debian|ubuntu) echo "ubuntu"; return ;;
+    esac
+  done
+  echo "unknown"
 }
 
 # Ensure Homebrew is on PATH regardless of how the shell was launched.
 # Covers macOS (Apple Silicon + Intel) and Linux (system + per-user linuxbrew).
-# Safe to call when brew is absent (no-op); returns 0 either way.
+# Safe to call when brew is absent; failures from an existing brew are reported.
 util::setup_brew() {
-  # Already on PATH -> make sure the full env is loaded and return.
+  local candidate="" shellenv
   if util::is_available brew; then
-    eval "$(brew shellenv)"
+    candidate=brew
+  else
+    local path
+    for path in \
+      /opt/homebrew/bin/brew \
+      /usr/local/bin/brew \
+      /home/linuxbrew/.linuxbrew/bin/brew \
+      "${HOME}/.linuxbrew/bin/brew"; do
+      if [ -x "${path}" ]; then
+        candidate="${path}"
+        break
+      fi
+    done
+  fi
+  [[ -n "${candidate}" ]] || return 0
+  if ! shellenv="$("${candidate}" shellenv bash)"; then
+    log::error "Could not load the Homebrew environment from ${candidate}"
+    return 1
+  fi
+  eval "${shellenv}"
+}
+
+util::ensure_sudo() {
+  [[ "$(id -u)" != 0 ]] || return 0
+  if ! util::is_available sudo; then
+    log::error "This installation needs administrator access, but sudo is not installed. Ask your administrator to provision the required tools."
+    return 1
+  fi
+  if sudo -n -v 2>/dev/null; then
     return 0
   fi
-
-  local candidate
-  for candidate in \
-    /opt/homebrew/bin/brew \
-    /usr/local/bin/brew \
-    /home/linuxbrew/.linuxbrew/bin/brew \
-    "${HOME}/.linuxbrew/bin/brew"; do
-    if [ -x "${candidate}" ]; then
-      eval "$("${candidate}" shellenv)"
+  if [[ -t 0 && -z "${NONINTERACTIVE:-}" && -z "${CI:-}" ]]; then
+    log::always "Administrator access is required; authenticating with sudo."
+    if sudo -v; then
       return 0
     fi
+    log::error "Sudo authentication failed. Verify your administrator access and retry."
+  else
+    log::error "Sudo authentication is required. Run 'sudo -v' in a terminal and retry in that terminal, or ask your administrator to provision the tools for unattended installation."
+  fi
+  return 1
+}
+
+util::run_privileged() {
+  if [[ "$(id -u)" == 0 ]]; then
+    "$@"
+  else
+    util::ensure_sudo || return
+    sudo -n "$@"
+  fi
+}
+
+util::install_homebrew() {
+  local prefix="${1:?Homebrew prefix required}"
+  local parent="${prefix}" installer
+  while [[ ! -e "${parent}" ]]; do
+    parent="$(dirname "${parent}")"
   done
-  return 0
+  if [[ ! -w "${parent}" || ! -x "${parent}" ]]; then
+    util::ensure_sudo || return
+  fi
+  if ! installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+    log::error "Could not download the Homebrew installer."
+    return 1
+  fi
+  if [[ -z "${installer}" ]]; then
+    log::error "The downloaded Homebrew installer is empty."
+    return 1
+  fi
+  NONINTERACTIVE=1 bash -c "${installer}" || return
+  util::setup_brew || return
+  if ! util::is_available brew; then
+    log::error "The Homebrew installer completed but brew could not be found."
+    return 1
+  fi
+  brew analytics off
+}
+
+util::homebrew_prefix() {
+  if [[ "$(util::host_os)" == darwin ]]; then
+    if [[ "$(uname -m)" == arm64 ]]; then
+      printf '%s\n' /opt/homebrew
+    else
+      printf '%s\n' /usr/local
+    fi
+  else
+    printf '%s\n' /home/linuxbrew/.linuxbrew
+  fi
 }
 
 # Runs the given command and ignores any err signals

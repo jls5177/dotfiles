@@ -7,15 +7,17 @@ IFS=$'\n\t'
 # Use Chezmoi to get source root as it runs the script from temp files
 HOME_ROOT="{{ .chezmoi.sourceDir }}"
 SRC_ROOT=$(cd "${HOME_ROOT}"/.. && pwd -P)
+# shellcheck source=/dev/null
 source "${SRC_ROOT}/scripts/common.sh"
 
 DRYRUN="${DRYRUN:-false}"
 
-log::always "Running: ${BASH_SOURCE}"
+log::always "Running: ${BASH_SOURCE[0]}"
 
 run_bundle() {
   local brewfile="${1}"
   shift
+  log::always "Installing Homebrew bundle: $(basename "${brewfile}")"
   if [[ "${DRYRUN}" == "true" ]]; then
     log::always "DRYRUN" "$(ansi --green "brew bundle --file \"${brewfile}\"")"
   else
@@ -25,10 +27,9 @@ run_bundle() {
   fi
 }
 
-{{ if eq .chezmoi.os "darwin" }}
-
-# Only install Homebrew packages if not deploying minimal version
-{{ if not .config_state.minimal }}
+{{ if .config_state.minimal }}
+log::always "Skipping optional Homebrew bundles due to minimal config"
+{{ else if eq .chezmoi.os "darwin" }}
 log::always "Installing MacOSX Homebrew packages"
 
 # Install primary homebrew packages
@@ -66,14 +67,13 @@ log::always "Installing Msft Homebrew packages"
 run_bundle "${HOME_ROOT}/Brewfile-Msft"
 {{ end }}
 
-{{ else }}
-log::always "$(ansi --yellow "Skipping Homebrew package install due to minimal config")"
-{{ end }}
-
-{{- else if eq .osid "linux-ubuntu" }}
+{{- else if eq .chezmoi.os "linux" }}
+log::always "Installing Linux Homebrew packages ({{ .osid }})"
+{{ if eq .osid "linux-ubuntu" }}
 # Install primary homebrew packages
 # Brewfile hash: {{ include "Brewfile-Ubuntu" | sha256sum }}
 run_bundle "${HOME_ROOT}/Brewfile-Ubuntu"
+{{ end }}
 
 # Install cross-platform packages
 # Brewfile-common hash: {{ include "Brewfile-common" | sha256sum }}
@@ -87,4 +87,6 @@ log::always "Installing Msft Homebrew packages"
 run_bundle "${HOME_ROOT}/Brewfile-Msft"
 {{ end }}
 
+{{ else }}
+log::always "Skipping optional Homebrew bundles on unsupported OS: {{ .chezmoi.os }}"
 {{ end }}

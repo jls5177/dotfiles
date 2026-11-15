@@ -1,0 +1,5 @@
+{{- $shell := get (get . "config_state" | default dict) "shell" | default "zsh" -}}
+{{- if not (has $shell (list "zsh" "fish")) -}}
+{{- fail "config_state.shell must be zsh or fish; run DOTFILES_SHELL=fish make reinit (or zsh)" -}}
+{{- end -}}
+{{- $shell -}}

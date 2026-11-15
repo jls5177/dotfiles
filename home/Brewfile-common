@@ -1,6 +1,6 @@
 # Cross-platform Homebrew bundle.
 #
-# Bundled on every OS (macOS after Brewfile, Ubuntu after Brewfile-Ubuntu), so it
+# Bundled on macOS and Linux (Ubuntu after Brewfile-Ubuntu), so it
 # holds the tools wanted everywhere. Truly OS-specific packages live in the per-OS
 # Brewfiles (Brewfile, Brewfile-Ubuntu, ...).
 #
